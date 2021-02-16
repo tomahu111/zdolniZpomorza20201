@@ -1,5 +1,7 @@
 from tkinter import *
 from menus import createMenu
+import socket
+
 
 root = Tk()
 root.title("Nowa aplikacja")
@@ -15,6 +17,10 @@ counter = 1
 x1=0
 y1=0
 col = "#000000"
+
+hostname=socket.gethostname()
+HOST=socket.gethostbyname(hostname)
+
 #functions
 
 def increaseThick():
@@ -77,6 +83,7 @@ resetButton = Button(root, text="reset", padx=10, pady=10, command=resetCanva)
 
 #labels
 currThick = Label(root, text=str(counter), font=('Arial', 16), bg="red", padx=10, pady=10)
+hostLabel = Label(root, text=str(HOST), padx=20, pady=15)
 
 #canvas
 canva = Canvas(root, background = "#FEFEFE")
@@ -93,6 +100,8 @@ root.config(menu=menu)
 mOneButton.grid(row=0, column=0)
 currThick.grid(row=0, column=1, sticky="W")
 pOneButton.grid(row=0, column=2)
+
+hostLabel.grid(row=0, column=4)
 
 resetButton.grid(row=0, column=6)
 exitButton.grid(row=0, column=7)
