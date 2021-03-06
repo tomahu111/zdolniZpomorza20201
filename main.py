@@ -83,7 +83,7 @@ resetButton = Button(root, text="reset", padx=10, pady=10, command=resetCanva)
 
 #labels
 currThick = Label(root, text=str(counter), font=('Arial', 16), bg="red", padx=10, pady=10)
-hostLabel = Label(root, text=str(HOST), padx=20, pady=15)
+hostLabel = Label(root, text=str(hostname), padx=20, pady=15)
 
 #canvas
 canva = Canvas(root, background = "#FEFEFE")
