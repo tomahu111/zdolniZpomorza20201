@@ -7,7 +7,8 @@ import socket
 
 
 root = Tk()
-root.title("Nowa aplikacja")
+root.iconbitmap("img/logo.ico")
+root.title("ePaint")
 #root.geometry("300x300")
 if platform.system() == "Linux":
     root.attributes('-zoomed', True)
@@ -114,7 +115,7 @@ resetButton = Button(root, text="reset", command=resetCanva)
 
 hostLabel = Label(root, text=str(hostname))
 #canvas
-canva = Canvas(root,background = "#FEFEFE", cursor="spraycan")
+canva = Canvas(root,background = "#FEFEFE", cursor="pencil")
 
 menu = createMenu(root)
 root.config(menu=menu)
