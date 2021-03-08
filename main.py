@@ -1,12 +1,19 @@
 from tkinter import *
+from tkinter.ttk import *
+from tkinter import colorchooser
 from menus import createMenu
+import platform
 import socket
 
 
 root = Tk()
 root.title("Nowa aplikacja")
 #root.geometry("300x300")
-root.state("zoomed")
+if platform.system() == "Linux":
+    root.attributes('-zoomed', True)
+else:
+    root.state("zoomed")
+    
 
 
 root.rowconfigure(1, weight=1)
@@ -18,36 +25,53 @@ x1=0
 y1=0
 col = "#000000"
 
+style = Style()
+style.configure("Padding.TButton",padding=10)
+style.configure("CurrentColor.TLabel", padding=10, background=col)
+
 hostname=socket.gethostname()
 HOST=socket.gethostbyname(hostname)
 
 #functions
 
-def increaseThick():
+def updateThick(skala):
     global counter
-    counter=counter+1
+    counter=int(float(skala))
     currThick.config(text=str(counter))
-
-def decreaseThick():
-    global counter
-    if(counter>1):
-        counter=counter-1
-        currThick.config(text=str(counter))
 
 def chooseColor(newCol):
     global col
-    col=newCol
+    if newCol == "custom":
+        newCol = colorchooser.askcolor()[1]
+        if newCol is None: return
+    # Wybor koloru tekstu
+    col = newCol
+    red = int(col[1:3],16)
+    green = int(col[3:5],16)
+    blue = int(col[5:7],16)
+    if (red*0.299 + green*0.587 + blue*0.144) > 186: 
+        textcolor = "black"
+    else: textcolor = "white"
+
+    style.configure("CurrentColor.TLabel", background=col, foreground=textcolor)
+
+def freeDraw(x,y,thickness=1,color="black"):
+    canva.create_oval(x-thickness, y-thickness, x+thickness, y+thickness, fill=color, outline=color)
 def m1click(event):
     global x1, y1
     x1=event.x
     y1=event.y
+    freeDraw(x1,y1,thickness=counter,color=col)
 def m_move(event):
     global x1, y1, col, counter
-    if((abs(x1-event.x) + abs(y1-event.y)) <= counter):
-        canva.create_oval(event.x-counter, event.y-counter, event.x+counter, event.y+counter, fill=col, outline=col)
-    else:
-        canva.create_line(x1, y1, event.x, event.y, fill = col, width=counter*2)
-    #canva.create_oval(x1-counter, y1-counter, event.x+counter, event.y+counter, fill=col)
+    #TODO jakas klasa do tego?
+    xdiff = x1-event.x
+    ydiff = y1-event.y
+    maxnum = max(abs(xdiff),abs(ydiff))
+    for i in range(maxnum):
+        x = int(event.x + (float(i)/maxnum * xdiff))
+        y = int(event.y + (float(i)/maxnum * ydiff))
+        freeDraw(x,y,thickness=counter,color=col)
     x1=event.x
     y1=event.y
 def resetCanva():
@@ -60,6 +84,7 @@ def resetCanva():
     greenButton=canva.create_rectangle(10, 60, 30, 80, fill="#00FF00")
     blueButton=canva.create_rectangle(10, 85, 30, 105, fill="#0000FF")
     whiteButton=canva.create_rectangle(10, 110, 30, 130, fill="#FFFFFF")
+    customColorButton=canva.create_oval(10, 135, 30, 155, fill="#000000", outline="red")
     chooseColor("#000000")
     
     canva.tag_bind(blackButton, "<Button-1>", lambda w: chooseColor("#000000"))
@@ -67,26 +92,29 @@ def resetCanva():
     canva.tag_bind(greenButton, "<Button-1>", lambda w: chooseColor("#00FF00"))
     canva.tag_bind(blueButton, "<Button-1>", lambda w: chooseColor("#0000FF"))
     canva.tag_bind(whiteButton, "<Button-1>", lambda w: chooseColor("#FFFFFF"))
+    canva.tag_bind(customColorButton, "<Button-1>", lambda w: chooseColor("custom"))
 
-#buttons
-#blackButton = Button(root, text="black", padx=5, pady=15, command=chooseBlack)
-#redButton = Button(root, text="red", padx=5, pady=15, command=chooseRed)
-#greenButton = Button(root, text="green", padx=5, pady=15, command=chooseGreen)
-#blueButton = Button(root, text="blue", padx=5, pady=15, command=chooseBlue)
+# mOneButton = Button(root, text="-1", padx=5, pady=15, command=decreaseThick)
+# pOneButton = Button(root, text="+1", padx=5, pady=15, command=increaseThick)
 
-mOneButton = Button(root, text="-1", padx=5, pady=15, command=decreaseThick)
-pOneButton = Button(root, text="+1", padx=5, pady=15, command=increaseThick)
+# exitButton = Button(root, text="exit", padx=10, pady=10,
+#                font=('Arial', 11), command=exit)
+# resetButton = Button(root, text="reset", padx=10, pady=10, command=resetCanva)
 
-exitButton = Button(root, text="exit", padx=10, pady=10,
-               font=('Arial', 11), command=exit)
-resetButton = Button(root, text="reset", padx=10, pady=10, command=resetCanva)
+
+currThick = Label(root, text=str(counter),style="CurrentColor.TLabel")
+thicknessSlider = Scale(root,from_=1,to=10,command=updateThick, variable=IntVar(),value=1)
+
+exitButton = Button(root, text="exit", command=exit)
+resetButton = Button(root, text="reset", command=resetCanva)
 
 #labels
-currThick = Label(root, text=str(counter), font=('Arial', 16), bg="red", padx=10, pady=10)
-hostLabel = Label(root, text=str(hostname), padx=20, pady=15)
+# currThick = Label(root, text=str(counter), font=('Arial', 16), bg="red")
 
+
+hostLabel = Label(root, text=str(hostname))
 #canvas
-canva = Canvas(root, background = "#FEFEFE")
+canva = Canvas(root,background = "#FEFEFE", cursor="spraycan")
 
 menu = createMenu(root)
 root.config(menu=menu)
@@ -97,9 +125,12 @@ root.config(menu=menu)
 #greenButton.grid(row=0, column=2)
 #blueButton.grid(row=0, column=3)
 
-mOneButton.grid(row=0, column=0)
+
+
+#mOneButton.grid(row=0, column=0)
 currThick.grid(row=0, column=1, sticky="W")
-pOneButton.grid(row=0, column=2)
+#pOneButton.grid(row=0, column=2)
+thicknessSlider.grid(row=0,column=3)
 
 hostLabel.grid(row=0, column=4)
 
