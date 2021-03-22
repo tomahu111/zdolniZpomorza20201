@@ -80,6 +80,7 @@ def resetCanva():
     canva.delete('all')
     counter=1
     currThick.config(text=str(counter))
+    thicknessSlider.set(1)
     blackButton=canva.create_rectangle(10, 10, 30, 30, fill="#000000")
     redButton=canva.create_rectangle(10, 35, 30, 55, fill="#FF0000")
     greenButton=canva.create_rectangle(10, 60, 30, 80, fill="#00FF00")
