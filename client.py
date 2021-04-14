@@ -5,7 +5,7 @@ from tkinter import *
 PORT = 37234
 # HOST = '192.168.0.143'
 HOST = socket.gethostbyname('S4-K001')
-BUFFER = 1024
+BUFFER = 65536
 
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,24 +16,58 @@ client_ip = str(socket.gethostbyname(client_host)).encode("utf8")
 
 client_socket.send(client_ip)
 
+
+print("Oczekiwanie na połączenie...")
 info = client_socket.recv(BUFFER).decode("utf8")
 print(info)
 
 
-
-def mainwindow():
-    master = Tk()
-    canva = Canvas(master, background="#FEFEFE", cursor="pencil")
-    canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
-
-    master.mainloop()
-
+master = Tk()
+canva = Canvas(master, background="#FEFEFE", cursor="pencil")
+canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
+converted = []
 def receive():
+    global converted
     while True:
         info = client_socket.recv(BUFFER).decode("utf8")
-        converted = eval(info)
+        print(info)
+        try:
+            converted = eval((info))
+        except:
+            #print("Cos jest nie tak")
+            converted = []
+        #print(converted)
 
-thread1 = threading.Thread(target=receive)
-thread1.start()
-thread2 = threading.Thread(target=mainwindow)
-thread2.start()
+def drawpoint(x1,y1):
+    canva.create_oval(x1-1, y1-1, x1+1, y1+1, fill="black", outline="black")
+    
+
+def draw():
+    global converted
+    while True:
+        if len(converted) > 0:
+            x1 = converted[0]
+            y1 = converted[1]
+            x2 = converted[2]
+            y2 = converted[3]
+            converted.clear()
+            xdiff = x1-x2
+            ydiff = y1-y2
+            maxnum = max(abs(xdiff), abs(ydiff))
+            for i in range(maxnum):
+                x = int(x2 + (float(i)/maxnum * xdiff))
+                y = int(y2 + (float(i)/maxnum * ydiff))
+                drawpoint(x,y)
+                
+            
+            #canva.create_oval(x-1, y-1, x+1, y+1, fill="black", outline="black")
+
+
+socketThread = threading.Thread(target=receive)
+socketThread.start()
+drawThread = threading.Thread(target=draw)
+drawThread.start()
+# def thread2():
+master.mainloop()
+# thread2= threading.Thread(target=thread2)
+# thread2.start()
