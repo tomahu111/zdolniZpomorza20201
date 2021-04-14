@@ -9,6 +9,12 @@ def helpApp():
 def connectWindow():
     connectWindow = tk.Toplevel()
     connectWindow.title("Połącz z serwerem...")
-    connectWindow.geometry("600x450")
+    connectWindow.geometry("100x50")
     label = tk.Label(connectWindow, text = "Wpisz IP serwera:")
     label.pack(side=tk.BOTTOM)
+
+    textinput = tk.Text(connectWindow, height=10, width=40)
+    textinput.pack()
+
+    connectbutton = tk.Button(connectWindow, hight=10, width=20, text="Połącz")
+    connectbutton.pack()

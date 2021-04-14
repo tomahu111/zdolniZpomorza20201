@@ -8,7 +8,7 @@ def createMenu(root):
     # Menu pliku
     filemenu = Menu(menu,tearoff=0)
     filemenu.add_command(label="Otwórz")
-    filemenu.add_command(label="Połącz z serwerem")
+    filemenu.add_command(label="Połącz z serwerem", command=dialogs.connectWindow)
     filemenu.add_command(label="Zapisz")
     filemenu.add_command(label="Drukuj")
     filemenu.add_command(label="Wyślij faxem")
