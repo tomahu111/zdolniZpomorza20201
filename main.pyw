@@ -6,8 +6,8 @@ from menus import createMenu
 import platform
 import socket
 
-# class okna z rysowaniem
 
+# class okna z rysowaniem
 
 class ePaintGUI:
     def __init__(self, master):
@@ -124,8 +124,6 @@ class ePaintGUI:
             self.freeDraw(thickness=self.counter, color=self.col)
         self.x1 = event.x
         self.y1 = event.y
-
-        # wysłać do clienta
         print(self.x1, self.y1, self.x, self.y)
 
 
@@ -135,6 +133,18 @@ root.config(menu=menu)
 style = Style()
 
 
+# funkcja główna
+
+
+def main():
+    global myWindow
+    myWindow = ePaintGUI(root)
+    myWindow.resetCanva()
+
+    myWindow.canva.bind("<Button-1>", myWindow.m1click)
+    myWindow.canva.bind("<B1-Motion>", myWindow.m_move)
+
+
 # definiowanie połaczenia
 
 PORT = 37234
@@ -142,127 +152,20 @@ BUFFER = 1024
 hostname = socket.gethostname()
 HOST = socket.gethostbyname(hostname)
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((HOST, PORT))
-server_socket.listen()
 
-clients = []
-
-
-def broadcast(messege):
-    for client in clients:
-        client.send(messege)
+def hostLabel():
+    global HOST
+    print(HOST)
 
 
-def handle(client):
-    while True:
-        try:
-            message = client.recv(BUFFER)
-            broadcast(message)
-        except:
-            client.close()
-            broadcast('Utracono połaczenie...')
-
-
-def receive():
-    while True:
-        client_socket, adr = server_socket.accept()
-        print('Połączenie z ', adr[0], 'Port: ', adr[1])
-
-        clients.append(client_socket)
-
-        # FROM CLIENT
-        host_ip = client_socket.recv(BUFFER).decode("utf8")
-        print(host_ip)
-
-        info = "Witaj w ePaint 0.001".encode("utf8")
-        client_socket.send(info)
-
-        # Start Handling Thread For Client
-        # thread = threading.Thread(target=handle, args=(client_socket,))
-        # thread.start()
-
-
-# Starting Threads For Listening And Writing
-receive_thread = threading.Thread(target=receive)
-receive_thread.start()
-
-
-# funkcja główna
-
-
-def main():
-    myWindow = ePaintGUI(root)
-    myWindow.resetCanva()
-
-    myWindow.canva.bind("<Button-1>", myWindow.m1click)
-    myWindow.canva.bind("<B1-Motion>", myWindow.m_move)
-    # receive()
+def hostMain():
+    hostLabel()
 
 
 main_thread = threading.Thread(target=main)
 main_thread.start()
 
-# main()
+host_thread = threading.Thread(target=hostMain)
+host_thread.start()
 
 root.mainloop()
-
-
-# hostname = socket.gethostname()
-# HOST = socket.gethostbyname(hostname)
-
-# # functions
-
-
-# def freeDraw(x, y, thickness=1, color="black"):
-#     canva.create_oval(x-thickness, y-thickness, x+thickness,
-#                       y+thickness, fill=color, outline=color)
-
-
-# # exitButton = Button(root, text="exit", command=exit)
-
-# # labels
-# # currThick = Label(root, text=str(counter), font=('Arial', 16), bg="red")
-
-
-# hostLabel = Label(root, text=str(hostname))
-# # canvas
-# canva = Canvas(root, background="#FEFEFE", cursor="pencil")
-
-# menu = createMenu(root)
-# root.config(menu=menu)
-
-
-# PORT = 37234
-# # HOST = '192.168.0.143'
-# HOST = socket.gethostbyname('M34')
-# BUFFER = 1024
-
-
-# client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# client_socket.connect((HOST, PORT))
-
-# client_host = socket.gethostname()
-# client_ip = str(socket.gethostbyname(client_host)).encode("utf8")
-
-# client_socket.send(client_ip)
-
-# # info = client_socket.recv(BUFFER).decode("utf8")
-# # print(info)
-
-
-# def receive():
-#     while True:
-#         try:
-#             message = client_socket.recv(1024).decode('ascii')
-#             print(message)
-
-#         except:
-#             # Close Connection When Error
-#             print("An error occured!")
-#             client_socket.close()
-#             break
-
-
-# write_thread = threading.Thread(target=write)
-# write_thread.start()
