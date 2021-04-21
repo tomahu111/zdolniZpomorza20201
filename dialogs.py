@@ -16,5 +16,5 @@ def connectWindow():
     textinput = tk.Text(connectWindow, height=10, width=40)
     textinput.pack()
 
-    connectbutton = tk.Button(connectWindow, hight=10, width=20, text="Połącz")
+    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz")
     connectbutton.pack()
