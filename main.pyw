@@ -8,6 +8,7 @@ import socket
 
 # class okna z rysowaniem
 
+buffor=[]
 
 class ePaintGUI:
     def __init__(self, master):
@@ -115,6 +116,7 @@ class ePaintGUI:
         self.freeDraw(thickness=self.counter, color=self.col)
 
     def m_move(self, event):
+        global buffor
         xdiff = self.x1-event.x
         ydiff = self.y1-event.y
         maxnum = max(abs(xdiff), abs(ydiff))
@@ -122,11 +124,17 @@ class ePaintGUI:
             self.x = int(event.x + (float(i)/maxnum * xdiff))
             self.y = int(event.y + (float(i)/maxnum * ydiff))
             self.freeDraw(thickness=self.counter, color=self.col)
+        
+        buffor.append(self.x1)
+        buffor.append(self.y1)
         self.x1 = event.x
         self.y1 = event.y
-
+        buffor.append(self.x1)
+        buffor.append(self.y1)
+        buffor.append(self.col)
+        buffor.append(self.counter)
         # wysłać do clienta
-        print(self.x1, self.y1, self.x, self.y)
+        # print(self.x1, self.y1, self.x, self.y)
 
 
 root = Tk()
@@ -165,6 +173,7 @@ def handle(client):
 
 
 def receive():
+    global buffor
     while True:
         client_socket, adr = server_socket.accept()
         print('Połączenie z ', adr[0], 'Port: ', adr[1])
@@ -177,6 +186,13 @@ def receive():
 
         info = "Witaj w ePaint 0.001".encode("utf8")
         client_socket.send(info)
+        if len(clients)>0:
+            while True:
+                if len(buffor)>=6:
+                    for i in clients:
+                        client_socket.send(str(buffor).encode("utf8"))
+                    buffor.clear()
+
 
         # Start Handling Thread For Client
         # thread = threading.Thread(target=handle, args=(client_socket,))
