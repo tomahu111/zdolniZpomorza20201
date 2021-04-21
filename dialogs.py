@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from enum import Enum
+from epserver import epserver
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -9,6 +10,8 @@ def messagewindow(type, title, message):
         messagebox.showwarning(title=title,message=message)
     elif type == msgboxtype.error:
         messagebox.showerror(title=title,message=message)
+    else:
+        raise Exception("Nie podano typu wiadomości dla messagewindow")
 
 class msgboxtype(Enum):
     info = 1
@@ -24,22 +27,18 @@ def helpApp():
 
 # Zarządzanie połączeniem
 class serverStatusUI:
-    running = False
     statusLabel = None
     startButton = None
 
     @staticmethod
-    def toggleStatus():
-        serverStatusUI.running = not serverStatusUI.running
+    def toggleStatus(status):
         try:
-            print("zamiana")
-            if serverStatusUI == True:
-                print("1")
-                statusLabel.config(text="Uruchomony")
-                startButton.config(text="Zatrzymaj Serwer")
+            if status == True:
+                serverStatusUI.statusLabel.config(text="Uruchomony")
+                serverStatusUI.startButton.config(text="Zatrzymaj Serwer")
             else:
-                statusLabel.config(text="Wyłączony")
-                startButton.config(text="Uruchom Serwer")
+                serverStatusUI.statusLabel.config(text="Wyłączony")
+                serverStatusUI.startButton.config(text="Uruchom Serwer")
         except:
             print("Próbowano zmienić status dialogu który jeszcze nie istnieje!")
 
@@ -56,18 +55,19 @@ def connectWindow():
     label.pack(side=tk.TOP)
     textinput.pack(side=tk.TOP)
     connectbutton.pack(side=tk.TOP)
-
+sv=None
 def startServer():
-    import epserver
-    epserver.setup() # Bez argumentow oznacza automatyczne uzyskanie ip oraz domyslny port: 37234
-    serverStatusUI.toggleStatus()
-    if epserver.start() == False:
-        print("Serwer jest już uruchomiony!")
+    global sv
+    if sv is None:
+        sv = epserver()
+    if sv.RUNNING == False:
+        if sv.start() == True:
+            serverStatusUI.toggleStatus(True)
+        else:
+            messagewindow(msgboxtype.error, "Błąd", "Nie udało się uruchomić serwera")
     else:
-        pass
-
-
-        
+        sv.stop()
+        serverStatusUI.toggleStatus(False)
 
 def serverManWindow():
     serverWindow = tk.Toplevel()

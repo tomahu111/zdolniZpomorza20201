@@ -28,6 +28,7 @@ converted = []
 def receive():
     global converted
     while True:
+        
         info = client_socket.recv(BUFFER).decode("utf8")
         try:
             converted = eval((info))
