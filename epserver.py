@@ -40,7 +40,6 @@ class epserver:
         self.server_socket.close()
         self.RUNNING=False
     # info = (1, 2, 3, 4, 5, 6, 7, 8)
-
-
-        
-    
+class epclient:
+    def __init__(hostip, buffer=1024, port=37234):
+        pass

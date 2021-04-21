@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from enum import Enum
-from epserver import epserver
+import epserver
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -50,7 +50,7 @@ def connectWindow():
 
     label = tk.Label(connectWindow, text = "Wpisz IPv4 serwera:")
     textinput = tk.Entry(connectWindow)
-    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz")
+    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connectTo())
 
     label.pack(side=tk.TOP)
     textinput.pack(side=tk.TOP)
@@ -68,6 +68,10 @@ def startServer():
     else:
         sv.stop()
         serverStatusUI.toggleStatus(False)
+
+def connectTo():
+    from main import myWindow
+    myWindow.changeMode(programMode.client)
 
 def serverManWindow():
     serverWindow = tk.Toplevel()
@@ -91,8 +95,6 @@ def infowindow(text):
 
     label = tk.Label(infowindow, text=text)
     label.pack(side=tk.TOP)
-
-
 
 
 

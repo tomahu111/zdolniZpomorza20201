@@ -60,7 +60,6 @@ def draw():
                 x = int(x2 + (float(i)/maxnum * xdiff))
                 y = int(y2 + (float(i)/maxnum * ydiff))
                 drawpoint(x,y, color, thickness)
-                
             
             #canva.create_oval(x-1, y-1, x+1, y+1, fill="black", outline="black")
 
