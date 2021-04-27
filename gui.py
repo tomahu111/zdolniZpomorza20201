@@ -113,8 +113,8 @@ class ePaintGUI:
         editmenu.add_command(label="Wklej")
         editmenu.add_command(label="Obróć w prawo")
         editmenu.add_command(label="Obróć w lewo")
-        editmenu.add_command(label="Odbij w poziomie", command=lambda: self.rotateObjects())
-        editmenu.add_command(label="Odbij w pionie")
+        editmenu.add_command(label="Odbij w poziomie", command=lambda: self.mirrorObjects(0))
+        editmenu.add_command(label="Odbij w pionie", command=lambda: self.mirrorObjects(1))
         editmenu.add_command(label="Resetuj ustawienia pędzla")
         editmenu.add_command(label="Wyczyść")
 
@@ -182,15 +182,20 @@ class ePaintGUI:
         elif mode == programMode.server or mode == programMode.normal:
             self.bindEvents()
 
-    def rotateObjects(self):
+    def mirrorObjects(self,mode):
         width = self.canva.winfo_screenwidth()
         height = self.canva.winfo_screenheight()
         objs = self.getAllIDs()
         for o in objs:
             coords = self.canva.coords(o)
-            x1 = width - coords[0]
-            self.canva.coords(x1, coords[1], coords[2], coords[3])
-
+            if mode == 0: # W pionie
+                x1 = width - coords[0]
+                roznica = coords[0] - coords[2]
+                self.canva.coords(o, x1, coords[1], x1+roznica, coords[3])
+            elif mode == 1: # W poziomie
+                y1 = height - coords[1]
+                roznica = coords[1] - coords[3]
+                self.canva.coords(o, coords[0], y1 , coords[2], y1+roznica)
     def getAllIDs(self):
         return self.canva.find_all()
 
