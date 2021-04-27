@@ -183,9 +183,13 @@ class ePaintGUI:
             self.bindEvents()
 
     def rotateObjects(self):
+        width = self.canva.winfo_screenwidth()
+        height = self.canva.winfo_screenheight()
         objs = self.getAllIDs()
         for o in objs:
-            self.canva.
+            coords = self.canva.coords(o)
+            x1 = width - coords[0]
+            self.canva.coords(x1, coords[1], coords[2], coords[3])
 
     def getAllIDs(self):
         return self.canva.find_all()

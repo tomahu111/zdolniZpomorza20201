@@ -1,5 +1,7 @@
 from tkinter import Menu
 import dialogs as dialogs
+from gui import myWindow
+
 
 menu = None
 def createMenu(root):
@@ -24,7 +26,7 @@ def createMenu(root):
     editmenu.add_command(label="Wklej")
     editmenu.add_command(label="Obróć w prawo")
     editmenu.add_command(label="Obróć w lewo")
-    editmenu.add_command(label="Odbij w poziomie")
+    editmenu.add_command(label="Odbij w poziomie", command=lambda: myWindow.rotateObjects())
     editmenu.add_command(label="Odbij w pionie")
     editmenu.add_command(label="Resetuj ustawienia pędzla")
     editmenu.add_command(label="Wyczyść")

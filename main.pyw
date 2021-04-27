@@ -7,16 +7,9 @@ import platform
 import socket
 from gui import *
 
-root = Tk()
-menu = createMenu(root)
-root.config(menu=menu)
-style = Style()
+
 
 # funkcja główna
-def main():
-    global myWindow
-    myWindow = ePaintGUI(root)
-    myWindow.resetCanva()
 
 
 # definiowanie połaczenia
@@ -26,6 +19,8 @@ BUFFER = 1024
 hostname = socket.gethostname()
 HOST = socket.gethostbyname(hostname)
 
+def main():
+    initGui()
 
 def hostLabel():
     global HOST
@@ -41,5 +36,3 @@ main_thread.start()
 
 host_thread = threading.Thread(target=hostMain)
 host_thread.start()
-
-root.mainloop()
