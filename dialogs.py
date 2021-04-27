@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from enum import Enum
-import epserver
+from epserver import *
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -50,7 +50,7 @@ def connectWindow():
 
     label = tk.Label(connectWindow, text = "Wpisz IPv4 serwera:")
     textinput = tk.Entry(connectWindow)
-    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connect(textinput.get()))
+    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connectToServer(textinput.get()))
 
     label.pack(side=tk.TOP)
     textinput.pack(side=tk.TOP)
@@ -60,11 +60,11 @@ def startServer():
     global sv
     if sv is None:
         sv = epserver()
-    if sv.RUNNING == False:
-        if sv.start() == True:
-            serverStatusUI.toggleStatus(True)
-        else:
-            messagewindow(msgboxtype.error, "Błąd", "Nie udało się uruchomić serwera")
+    #if sv.RUNNING == False:
+    #    if sv.start() == True:
+    #        serverStatusUI.toggleStatus(True)
+    #    else:
+    #        messagewindow(msgboxtype.error, "Błąd", "Nie udało się uruchomić serwera")
     else:
         sv.stop()
         serverStatusUI.toggleStatus(False)
@@ -98,13 +98,12 @@ def infowindow(text):
 
 
 
-def connect(ip):
+def connectToServer(ip):
     import ipaddress
     try:
         a = ipaddress.ip_address(ip)
     except:
         messagewindow(msgboxtype.error, title="Serwer", message="Niepoprawny adres IP")
         return -1
-    import epserver
-    infowindow("Uruchamianie serwera...")
-    epclient(ip)    #epserver.start()
+    #infowindow("Uruchamianie serwera...")
+    klient=epclient(ip)    #epserver.start()
