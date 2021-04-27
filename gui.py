@@ -2,8 +2,8 @@ import threading
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import colorchooser
-from menus import createMenu
 from enum import Enum
+import dialogs
 class programMode(Enum):
     normal = 0
     client = 1
@@ -49,6 +49,7 @@ class ePaintGUI:
         self.canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
 
         self.bindEvents()
+        self.createMenu(master)
         
 
     def updateThick(self, skala):
@@ -90,6 +91,40 @@ class ePaintGUI:
                             lambda w: self.chooseColor("custom"))
 
     # zmiana koloru
+    def createMenu(self,root):
+        # Create menu
+        menu = Menu(root)
+        # Menu pliku
+        filemenu = Menu(menu,tearoff=0)
+        filemenu.add_command(label="Otwórz")
+        filemenu.add_command(label="Połącz z serwerem", command=dialogs.connectWindow)
+        filemenu.add_command(label="Uruchom serwer", command=dialogs.serverManWindow)
+        filemenu.add_command(label="Zapisz")
+        filemenu.add_command(label="Drukuj")
+        filemenu.add_command(label="Wyślij faxem")
+        filemenu.add_command(label="Wyślij e-mailem")
+        filemenu.add_separator()
+        filemenu.add_command(label="Ustawienia")
+        filemenu.add_command(label="Wyjście", command=root.quit())
+        menu.add_cascade(label="Plik", menu=filemenu)
+        # Menu edycji
+        editmenu = Menu(menu,tearoff=0)
+        editmenu.add_command(label="Kopiuj")
+        editmenu.add_command(label="Wklej")
+        editmenu.add_command(label="Obróć w prawo")
+        editmenu.add_command(label="Obróć w lewo")
+        editmenu.add_command(label="Odbij w poziomie", command=lambda: self.rotateObjects())
+        editmenu.add_command(label="Odbij w pionie")
+        editmenu.add_command(label="Resetuj ustawienia pędzla")
+        editmenu.add_command(label="Wyczyść")
+
+        menu.add_cascade(label="Edycja", menu=editmenu)
+        # Menu pomocy
+        helpmenu = Menu(menu, tearoff=0)
+        helpmenu.add_command(label="O aplikacji", command=dialogs.helpApp)
+        menu.add_cascade(label="Pomoc", menu=helpmenu)
+        self.master.config(menu=menu)
+
     def chooseColor(self, newColor):
         self.col
         if newColor == "custom":
@@ -146,4 +181,20 @@ class ePaintGUI:
 
         elif mode == programMode.server or mode == programMode.normal:
             self.bindEvents()
+
+    def rotateObjects(self):
+        objs = self.getAllIDs()
+        for o in objs:
+            self.canva.
+
+    def getAllIDs(self):
+        return self.canva.find_all()
+
+myWindow = None
+def initGui():
+    root = Tk()
+    myWindow = ePaintGUI(root)
+    myWindow.resetCanva()
+    root.mainloop()
+
 
