@@ -107,5 +107,4 @@ def connect(ip):
         return -1
     import epserver
     infowindow("Uruchamianie serwera...")
-    epserver.setup(ip=ip)
-    epserver.start()
+    epclient(ip)    #epserver.start()
