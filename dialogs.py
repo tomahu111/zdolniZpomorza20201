@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from enum import Enum
+from PIL import ImageTk, Image
 import epserver
 
 def messagewindow(type, title, message):
@@ -20,10 +21,28 @@ class msgboxtype(Enum):
 
 def helpApp():
     helpWindow = tk.Toplevel()
+    helpWindow.resizable(False,False)
     helpWindow.title("O nas ...")
-    helpWindow.geometry("300x300")
-    content = tk.Label(helpWindow, text = "Wszystko o programie")
-    content.grid(row=1, column=1)
+    helpWindow.geometry("450x300")
+
+    contentframe = tk.Frame(helpWindow)
+    contentframe.pack(side=tk.TOP)
+    icon = ImageTk.PhotoImage(Image.open("logo.png"))
+    iconpanel = tk.Label(contentframe, image=icon)
+    iconpanel.pack(side=tk.TOP)
+
+    title = tk.Label(contentframe, text = "Program do rysowania z funkcjonalnością udostępniania rysunku innym użytkownikom w sieci",wraplength=400, justify="left", font=('Arial',12))
+    title.pack(side=tk.TOP, padx=10,pady=10)
+
+    creditframe = tk.Frame(contentframe)
+    creditframe.pack(side=tk.TOP)
+    text1 = tk.Label(creditframe,text="Program stworzony przez",font=('Arial',12)).pack(side=tk.TOP)
+    text2 = tk.Label(creditframe,text="Tomasz Hresiukiewicz").pack(side=tk.TOP)
+    text3 = tk.Label(creditframe,text="Paweł Struzik").pack(side=tk.TOP)
+    text4 = tk.Label(creditframe,text="Krystian Dzikiewicz").pack(side=tk.TOP)
+    text5 = tk.Label(creditframe,text="Aleksander Bieliński").pack(side=tk.TOP)
+
+    
 
 # Zarządzanie połączeniem
 class serverStatusUI:
