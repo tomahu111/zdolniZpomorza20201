@@ -50,7 +50,7 @@ def connectWindow():
 
     label = tk.Label(connectWindow, text = "Wpisz IPv4 serwera:")
     textinput = tk.Entry(connectWindow)
-    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connectTo())
+    connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connect(textinput.get()))
 
     label.pack(side=tk.TOP)
     textinput.pack(side=tk.TOP)
