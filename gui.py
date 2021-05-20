@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
 import dialogs
+buffor=[]
 class programMode(Enum):
     normal = 0
     client = 1
@@ -155,6 +156,7 @@ class ePaintGUI:
         self.freeDraw(thickness=self.counter, color=self.col)
 
     def m_move(self, event):
+        global buffor
         xdiff = self.x1-event.x
         ydiff = self.y1-event.y
         maxnum = max(abs(xdiff), abs(ydiff))
@@ -162,9 +164,15 @@ class ePaintGUI:
             self.x = int(event.x + (float(i)/maxnum * xdiff))
             self.y = int(event.y + (float(i)/maxnum * ydiff))
             self.freeDraw(thickness=self.counter, color=self.col)
+        buffor.append(self.x1)
+        buffor.append(self.y1)
         self.x1 = event.x
         self.y1 = event.y
-        print(self.x1, self.y1, self.x, self.y)
+        buffor.append(self.x1)
+        buffor.append(self.y1)
+        buffor.append(self.col)
+        buffor.append(self.counter)
+        #print(self.x1, self.y1, self.x, self.y)
 
     # Zmiana funkcjonalności programu
     def unbindEvents(self):

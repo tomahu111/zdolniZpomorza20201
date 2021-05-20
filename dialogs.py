@@ -3,7 +3,7 @@ from tkinter import messagebox
 from enum import Enum
 
 from PIL import ImageTk, Image
-import epserver
+from epserver import *
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -79,7 +79,8 @@ sv=None
 def startServer():
     global sv
     if sv is None:
-        sv = epserver()
+        sv = Epserver()
+        serverStatusUI.toggleStatus(True)
     #if sv.RUNNING == False:
     #    if sv.start() == True:
     #        serverStatusUI.toggleStatus(True)
@@ -87,6 +88,9 @@ def startServer():
     #        messagewindow(msgboxtype.error, "Błąd", "Nie udało się uruchomić serwera")
     else:
         sv.stop()
+        del sv
+        sv=None
+        #sv.stop()
         serverStatusUI.toggleStatus(False)
 
 def connectTo():

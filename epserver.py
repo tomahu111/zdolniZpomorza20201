@@ -1,7 +1,7 @@
 import socket
 import threading
-
-class epserver:
+from gui import *
+class Epserver:
     RUNNING=False
     def __init__(self,ip=None, port=37234):
         if ip is None:
@@ -19,48 +19,52 @@ class epserver:
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.HOST, self.PORT))
-        self.server_socket.listen(5)
+        self.server_socket.listen()
 
         self.RUNNING=True
         self.sv_thread = threading.Thread(target=self.serverthread)
         self.sv_thread.start()
 
     def serverthread(self):
+        #try:
         print("Wątek z serwerem uruchomiony!")
-        client_socket, adr = self.server_socket.accept()
-        info = "Witaj w ePaint 0.001".encode("utf8")
-        client_socket.send(info)
+        #self.client_socket, self.adr = self.server_socket.accept()
+        #info = "Witaj w ePaint 0.001".encode("utf8")
+        #client_socket.send(info)
         self.receive()
+        print("...")
+        #except:
+        #    print("closed")
         #while self.RUNNING == True:
         #    print('Połączenie z ', adr[0], 'Port: ', adr[1])
         #    # FROM CLIENT
         #    host_ip = client_socket.recv(BUFFER).decode("utf8")
         #    print(host_ip)
     def receive(self):
+        global buffor
+        self.clients=[]
         while True:
-            self.client_socket, self.adr = server_socket.accept()
-            print('Połączenie z ', adr[0], 'Port: ', adr[1])
+            self.client_socket, self.adr = self.server_socket.accept()
+            print('Połączenie z ', self.adr[0], 'Port: ', self.adr[1])
 
-            self.clients.append(client_socket)
+            self.clients.append(self.client_socket)
 
             # FROM CLIENT
-            self.host_ip = client_socket.recv(BUFFER).decode("utf8")
+            self.host_ip = self.client_socket.recv(self.BUFFER).decode("utf8")
             print(self.host_ip)
 
-            info = "Witaj w ePaint 0.001".encode("utf8")
-            client_socket.send(info)
-            if len(clients)>0:
+            #info = "Witaj w ePaint 0.001".encode("utf8")
+            #client_socket.send(info)
+            if len(self.clients)>0:
                 while True:
                     if len(buffor)>=6:
-                        for i in clients:
-                            client_socket.send(str(buffor).encode("utf8"))
+                        for i in self.clients:
+                            self.client_socket.send(str(buffor).encode("utf8"))
                         buffor.clear()
-
-        
-
     def stop(self):
-        self.server_socket.close()
+        #self.server_socket.close()
         self.RUNNING=False
+        self.server_socket.close()
     # info = (1, 2, 3, 4, 5, 6, 7, 8)
 class epclient:
     def __init__(self, hostip, buffer=1024, port=37234):
