@@ -71,6 +71,7 @@ def connectWindow():
 
     label = tk.Label(connectWindow, text = "Wpisz IPv4 serwera:")
     textinput = tk.Entry(connectWindow)
+    textinput.insert(tk.END, '192.168.16.22')
     connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connectToServer(textinput.get()))
 
     label.pack(side=tk.TOP)

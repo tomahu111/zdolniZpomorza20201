@@ -65,50 +65,50 @@ class Epserver:
 
 class epclient:
     def __init__(self, guiInstance, hostip, buffer=1024, port=37234):
+        self.guiInstance = guiInstance
         self.RUNNING = True
         self.PORT = port
-        # HOST = '192.168.0.143'
-        self.HOST = socket.gethostbyaddr(hostip)
+        self.HOST = socket.gethostbyaddr(hostip)[2][0]
         self.BUFFER = 65536
+        print(self.HOST, self.PORT)
 
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect((HOST, PORT))
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect((self.HOST, self.PORT))
 
         client_host = socket.gethostname()
         client_ip = str(socket.gethostbyname(client_host)).encode("utf8")
 
-        client_socket.send(client_ip)
+        self.client_socket.send(client_ip)
 
         self.converted=[]
+        receiveThread = threading.Thread(target=self.receive)
+        receiveThread.start()
         drawThread = threading.Thread(target=self.draw)
         drawThread.start()
-        receive()
 
-    def __del__(self):
-        self.RUNNING = False
-    # def receive(self):
-    #     #global self.converted
-    #     while self.RUNNING:
-    #         info = self.client_socket.recv(self.BUFFER).decode("utf8")
-    #         try:
-    #             self.converted = eval((info))
-    #         except:
-    #             #print("Cos jest nie tak")
-    #             self.converted = []
-    #         print(self.converted)
-    #         #print(self.converted
+    def receive(self):
+        #global self.converted
+        while self.RUNNING:
+            print("TEST")
+            info = self.client_socket.recv(self.BUFFER).decode("utf8")
+            try:
+                self.converted = eval((info))
+            except:
+                #print("Cos jest nie tak")
+                self.converted = []
+            print(self.converted)
+            #print(self.converted
 
     def draw(self):
         #global self.converted
         while self.RUNNING:
-            print("otrzymywanie informacji...")
             if len(self.converted) > 0:
                 x1 = self.converted[0]
                 y1 = self.converted[1]
                 x2 = self.converted[2]
                 y2 = self.converted[3]
                 color = self.converted[4]
-                thickness = self.converted[5]
+                thickness = int(self.converted[5])
                 self.converted.clear()
                 xdiff = x1-x2
                 ydiff = y1-y2
@@ -116,7 +116,7 @@ class epclient:
                 for i in range(maxnum):
                     x = int(x2 + (float(i)/maxnum * xdiff))
                     y = int(y2 + (float(i)/maxnum * ydiff))
-                    self.guiInstance.freeDraw(x,y, color, thickness)
+                    self.guiInstance.freeDraw(x,y, thickness, color)
             
                 #canva.create_oval(x-1, y-1, x+1, y+1, fill="black", outline="black")
 

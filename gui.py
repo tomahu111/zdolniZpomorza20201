@@ -145,14 +145,16 @@ class ePaintGUI:
                         background=self.col, foreground=textcolor)
 
     # rysowanie dowolne na canva
-    def freeDraw(self, thickness=1, color="#000000"):
+    def freeDraw(self,x,y, thickness=1, color="#000000"):
+        self.x = x
+        self.y = y
         self.canva.create_oval(self.x-thickness, self.y-thickness, self.x+thickness,
                                self.y+thickness, fill=color, outline=color)
 
     def m1click(self, event):
         self.x1 = event.x
         self.y1 = event.y
-        self.freeDraw(thickness=self.counter, color=self.col)
+        self.freeDraw(self.x1, self.y1, thickness=self.counter, color=self.col)
 
     def m_move(self, event):
         xdiff = self.x1-event.x
@@ -161,7 +163,7 @@ class ePaintGUI:
         for i in range(maxnum):
             self.x = int(event.x + (float(i)/maxnum * xdiff))
             self.y = int(event.y + (float(i)/maxnum * ydiff))
-            self.freeDraw(thickness=self.counter, color=self.col)
+            self.freeDraw(self.x, self.y, thickness=self.counter, color=self.col)
         self.x1 = event.x
         self.y1 = event.y
         print(self.x1, self.y1, self.x, self.y)
