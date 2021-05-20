@@ -3,7 +3,8 @@ from tkinter import messagebox
 from enum import Enum
 
 from PIL import ImageTk, Image
-import epserver
+from epserver import *
+import gui
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -79,7 +80,7 @@ sv=None
 def startServer():
     global sv
     if sv is None:
-        sv = epserver()
+        sv = Epserver()
     #if sv.RUNNING == False:
     #    if sv.start() == True:
     #        serverStatusUI.toggleStatus(True)
@@ -88,10 +89,6 @@ def startServer():
     else:
         sv.stop()
         serverStatusUI.toggleStatus(False)
-
-def connectTo():
-    from main import myWindow
-    myWindow.changeMode(programMode.client)
 
 def serverManWindow():
     serverWindow = tk.Toplevel()
@@ -126,4 +123,14 @@ def connectToServer(ip):
         messagewindow(msgboxtype.error, title="Serwer", message="Niepoprawny adres IP")
         return -1
     #infowindow("Uruchamianie serwera...")
-    klient=epclient(ip)    #epserver.start()
+    from gui import myWindow
+
+    # Przygotuj do polaczenia
+
+    # Reset canva
+    myWindow.resetCanva()
+    # Zmien tryb na taki gdzie nie mozna rysowac
+    myWindow.changeMode(gui.programMode.client)
+
+    # Tworzymy objekt epclient, dopóki istnieje program będzie odbierał informacje
+    clientprog = epclient(myWindow, ip)

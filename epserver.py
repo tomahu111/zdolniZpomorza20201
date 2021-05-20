@@ -1,7 +1,7 @@
 import socket
 import threading
 
-class epserver:
+class Epserver:
     RUNNING=False
     def __init__(self,ip=None, port=37234):
         if ip is None:
@@ -62,12 +62,14 @@ class epserver:
         self.server_socket.close()
         self.RUNNING=False
     # info = (1, 2, 3, 4, 5, 6, 7, 8)
+
 class epclient:
-    def __init__(self, hostip, buffer=1024, port=37234):
-        PORT = 37234
+    def __init__(self, guiInstance, hostip, buffer=1024, port=37234):
+        self.RUNNING = True
+        self.PORT = port
         # HOST = '192.168.0.143'
-        HOST = socket.gethostbyaddr(hostip)
-        BUFFER = 65536
+        self.HOST = socket.gethostbyaddr(hostip)
+        self.BUFFER = 65536
 
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((HOST, PORT))
@@ -78,30 +80,28 @@ class epclient:
         client_socket.send(client_ip)
 
         self.converted=[]
-        socketThread = threading.Thread(target=self.receive)
-        socketThread.start()
         drawThread = threading.Thread(target=self.draw)
         drawThread.start()
-    def receive(self):
-        #global self.converted
-        while True:
-        
-            info = client_socket.recv(BUFFER).decode("utf8")
-            try:
-                self.converted = eval((info))
-            except:
-                #print("Cos jest nie tak")
-                self.converted = []
-            print(self.converted)
-            #print(self.converted)
+        receive()
 
-    def drawpoint(self, x1,y1, color, thickness):
-        canva.create_oval(x1-thickness, y1-thickness, x1+thickness, y1+thickness, fill=color, outline=color)
-    
+    def __del__(self):
+        self.RUNNING = False
+    # def receive(self):
+    #     #global self.converted
+    #     while self.RUNNING:
+    #         info = self.client_socket.recv(self.BUFFER).decode("utf8")
+    #         try:
+    #             self.converted = eval((info))
+    #         except:
+    #             #print("Cos jest nie tak")
+    #             self.converted = []
+    #         print(self.converted)
+    #         #print(self.converted
 
     def draw(self):
         #global self.converted
-        while True:
+        while self.RUNNING:
+            print("otrzymywanie informacji...")
             if len(self.converted) > 0:
                 x1 = self.converted[0]
                 y1 = self.converted[1]
@@ -116,7 +116,7 @@ class epclient:
                 for i in range(maxnum):
                     x = int(x2 + (float(i)/maxnum * xdiff))
                     y = int(y2 + (float(i)/maxnum * ydiff))
-                    drawpoint(x,y, color, thickness)
+                    self.guiInstance.freeDraw(x,y, color, thickness)
             
                 #canva.create_oval(x-1, y-1, x+1, y+1, fill="black", outline="black")
 

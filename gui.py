@@ -173,14 +173,6 @@ class ePaintGUI:
     def bindEvents(self):
         self.canva.bind("<Button-1>", self.m1click)
         self.canva.bind("<B1-Motion>", self.m_move)
-    def changeMode(self,mode):
-        if mode == programMode.client:
-            self.unbindEvents()
-            # uruchom wątek do nasłuchiwania
-
-
-        elif mode == programMode.server or mode == programMode.normal:
-            self.bindEvents()
 
     def mirrorObjects(self,mode):
         width = self.canva.winfo_screenwidth()
@@ -199,8 +191,19 @@ class ePaintGUI:
     def getAllIDs(self):
         return self.canva.find_all()
 
+    def changeMode(self, mode):
+        self.mode = mode
+        if mode in programMode:
+            if mode == programMode.client:
+                self.unbindEvents()
+            elif mode == programMode.normal or mode == programMode.server:
+                self.bindEvents()
+
+
+
 myWindow = None
 def initGui():
+    global myWindow
     root = Tk()
     myWindow = ePaintGUI(root)
     myWindow.resetCanva()
