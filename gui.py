@@ -4,7 +4,11 @@ from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
 import dialogs
+<<<<<<< HEAD
 buffor=[]
+=======
+from sys import platform
+>>>>>>> refs/remotes/origin/intergracja-serwer
 class programMode(Enum):
     normal = 0
     client = 1
@@ -12,7 +16,8 @@ class programMode(Enum):
 
 class ePaintGUI:
     def __init__(self, master):
-        master.iconbitmap("img/logo.ico")
+        if platform == "win32":
+            master.iconbitmap("img/logo.ico")
         self.mode = programMode.normal
         self.master = master
         self.col = "#000000"
@@ -146,14 +151,16 @@ class ePaintGUI:
                         background=self.col, foreground=textcolor)
 
     # rysowanie dowolne na canva
-    def freeDraw(self, thickness=1, color="#000000"):
+    def freeDraw(self,x,y, thickness=1, color="#000000"):
+        self.x = x
+        self.y = y
         self.canva.create_oval(self.x-thickness, self.y-thickness, self.x+thickness,
                                self.y+thickness, fill=color, outline=color)
 
     def m1click(self, event):
         self.x1 = event.x
         self.y1 = event.y
-        self.freeDraw(thickness=self.counter, color=self.col)
+        self.freeDraw(self.x1, self.y1, thickness=self.counter, color=self.col)
 
     def m_move(self, event):
         global buffor
@@ -163,9 +170,13 @@ class ePaintGUI:
         for i in range(maxnum):
             self.x = int(event.x + (float(i)/maxnum * xdiff))
             self.y = int(event.y + (float(i)/maxnum * ydiff))
+<<<<<<< HEAD
             self.freeDraw(thickness=self.counter, color=self.col)
         buffor.append(self.x1)
         buffor.append(self.y1)
+=======
+            self.freeDraw(self.x, self.y, thickness=self.counter, color=self.col)
+>>>>>>> refs/remotes/origin/intergracja-serwer
         self.x1 = event.x
         self.y1 = event.y
         buffor.append(self.x1)
@@ -181,14 +192,6 @@ class ePaintGUI:
     def bindEvents(self):
         self.canva.bind("<Button-1>", self.m1click)
         self.canva.bind("<B1-Motion>", self.m_move)
-    def changeMode(self,mode):
-        if mode == programMode.client:
-            self.unbindEvents()
-            # uruchom wątek do nasłuchiwania
-
-
-        elif mode == programMode.server or mode == programMode.normal:
-            self.bindEvents()
 
     def mirrorObjects(self,mode):
         width = self.canva.winfo_screenwidth()
@@ -207,8 +210,19 @@ class ePaintGUI:
     def getAllIDs(self):
         return self.canva.find_all()
 
+    def changeMode(self, mode):
+        self.mode = mode
+        if mode in programMode:
+            if mode == programMode.client:
+                self.unbindEvents()
+            elif mode == programMode.normal or mode == programMode.server:
+                self.bindEvents()
+
+
+
 myWindow = None
 def initGui():
+    global myWindow
     root = Tk()
     myWindow = ePaintGUI(root)
     myWindow.resetCanva()

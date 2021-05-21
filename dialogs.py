@@ -4,6 +4,10 @@ from enum import Enum
 
 from PIL import ImageTk, Image
 from epserver import *
+<<<<<<< HEAD
+=======
+import gui
+>>>>>>> refs/remotes/origin/intergracja-serwer
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -28,20 +32,22 @@ def helpApp():
 
     contentframe = tk.Frame(helpWindow)
     contentframe.pack(side=tk.TOP)
-    icon = ImageTk.PhotoImage(Image.open("logo.png"))
-    iconpanel = tk.Label(contentframe, image=icon)
-    iconpanel.pack(side=tk.TOP)
+    #icon = ImageTk.PhotoImage(Image.open("img/logo.png"))
+    #iconpanel = tk.Label(contentframe, image=icon)
+    #iconpanel.pack(side=tk.TOP)
 
-    title = tk.Label(contentframe, text = "Program do rysowania z funkcjonalnością udostępniania rysunku innym użytkownikom w sieci",wraplength=400, justify="left", font=('Arial',12))
+    title = tk.Label(contentframe, text = "ePaint",wraplength=400, justify="left", font=('Segoe UI',24))
+    titledesc = tk.Label(contentframe, text = "Program do rysowania z funkcjonalnością udostępniania rysunku innym użytkownikom w sieci.",wraplength=400, justify="left", font=('Arial',12))
     title.pack(side=tk.TOP, padx=10,pady=10)
+    titledesc.pack(side=tk.TOP, padx=10,pady=10)
 
     creditframe = tk.Frame(contentframe)
     creditframe.pack(side=tk.TOP)
-    text1 = tk.Label(creditframe,text="Program stworzony przez",font=('Arial',12)).pack(side=tk.TOP)
-    text2 = tk.Label(creditframe,text="Tomasz Hresiukiewicz").pack(side=tk.TOP)
-    text3 = tk.Label(creditframe,text="Paweł Struzik").pack(side=tk.TOP)
-    text4 = tk.Label(creditframe,text="Krystian Dzikiewicz").pack(side=tk.TOP)
-    text5 = tk.Label(creditframe,text="Aleksander Bieliński").pack(side=tk.TOP)
+    text1 = tk.Label(creditframe,text="Program stworzony przez:",font=('Arial',12)).pack(side=tk.TOP)
+
+    with open("credits.txt", "r", encoding="utf-8") as credits:
+        for line in credits:
+            text = tk.Label(creditframe,text=line).pack(side=tk.TOP)
 
     
 
@@ -70,6 +76,7 @@ def connectWindow():
 
     label = tk.Label(connectWindow, text = "Wpisz IPv4 serwera:")
     textinput = tk.Entry(connectWindow)
+    textinput.insert(tk.END, '192.168.16.22')
     connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connectToServer(textinput.get()))
 
     label.pack(side=tk.TOP)
@@ -80,7 +87,10 @@ def startServer():
     global sv
     if sv is None:
         sv = Epserver()
+<<<<<<< HEAD
         serverStatusUI.toggleStatus(True)
+=======
+>>>>>>> refs/remotes/origin/intergracja-serwer
     #if sv.RUNNING == False:
     #    if sv.start() == True:
     #        serverStatusUI.toggleStatus(True)
@@ -92,10 +102,6 @@ def startServer():
         sv=None
         #sv.stop()
         serverStatusUI.toggleStatus(False)
-
-def connectTo():
-    from main import myWindow
-    myWindow.changeMode(programMode.client)
 
 def serverManWindow():
     serverWindow = tk.Toplevel()
@@ -130,4 +136,14 @@ def connectToServer(ip):
         messagewindow(msgboxtype.error, title="Serwer", message="Niepoprawny adres IP")
         return -1
     #infowindow("Uruchamianie serwera...")
-    klient=epclient(ip)    #epserver.start()
+    from gui import myWindow
+
+    # Przygotuj do polaczenia
+
+    # Reset canva
+    myWindow.resetCanva()
+    # Zmien tryb na taki gdzie nie mozna rysowac
+    myWindow.changeMode(gui.programMode.client)
+
+    # Tworzymy objekt epclient, dopóki istnieje program będzie odbierał informacje
+    clientprog = epclient(myWindow, ip)
