@@ -29,20 +29,22 @@ def helpApp():
 
     contentframe = tk.Frame(helpWindow)
     contentframe.pack(side=tk.TOP)
-    icon = ImageTk.PhotoImage(Image.open("logo.png"))
-    iconpanel = tk.Label(contentframe, image=icon)
-    iconpanel.pack(side=tk.TOP)
+    #icon = ImageTk.PhotoImage(Image.open("img/logo.png"))
+    #iconpanel = tk.Label(contentframe, image=icon)
+    #iconpanel.pack(side=tk.TOP)
 
-    title = tk.Label(contentframe, text = "Program do rysowania z funkcjonalnością udostępniania rysunku innym użytkownikom w sieci",wraplength=400, justify="left", font=('Arial',12))
+    title = tk.Label(contentframe, text = "ePaint",wraplength=400, justify="left", font=('Segoe UI',24))
+    titledesc = tk.Label(contentframe, text = "Program do rysowania z funkcjonalnością udostępniania rysunku innym użytkownikom w sieci.",wraplength=400, justify="left", font=('Arial',12))
     title.pack(side=tk.TOP, padx=10,pady=10)
+    titledesc.pack(side=tk.TOP, padx=10,pady=10)
 
     creditframe = tk.Frame(contentframe)
     creditframe.pack(side=tk.TOP)
-    text1 = tk.Label(creditframe,text="Program stworzony przez",font=('Arial',12)).pack(side=tk.TOP)
-    text2 = tk.Label(creditframe,text="Tomasz Hresiukiewicz").pack(side=tk.TOP)
-    text3 = tk.Label(creditframe,text="Paweł Struzik").pack(side=tk.TOP)
-    text4 = tk.Label(creditframe,text="Krystian Dzikiewicz").pack(side=tk.TOP)
-    text5 = tk.Label(creditframe,text="Aleksander Bieliński").pack(side=tk.TOP)
+    text1 = tk.Label(creditframe,text="Program stworzony przez:",font=('Arial',12)).pack(side=tk.TOP)
+
+    with open("credits.txt", "r", encoding="utf-8") as credits:
+        for line in credits:
+            text = tk.Label(creditframe,text=line).pack(side=tk.TOP)
 
     
 

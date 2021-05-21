@@ -4,6 +4,7 @@ from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
 import dialogs
+from sys import platform
 class programMode(Enum):
     normal = 0
     client = 1
@@ -11,7 +12,8 @@ class programMode(Enum):
 
 class ePaintGUI:
     def __init__(self, master):
-        master.iconbitmap("img/logo.ico")
+        if platform == "win32":
+            master.iconbitmap("img/logo.ico")
         self.mode = programMode.normal
         self.master = master
         self.col = "#000000"
