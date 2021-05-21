@@ -168,6 +168,8 @@ class ePaintGUI:
             self.x = int(event.x + (float(i)/maxnum * xdiff))
             self.y = int(event.y + (float(i)/maxnum * ydiff))
             self.freeDraw(self.x, self.y, thickness=self.counter, color=self.col)
+        buffor.append(self.x)
+        buffor.append(self.y)
         self.x1 = event.x
         self.y1 = event.y
         buffor.append(self.x1)
