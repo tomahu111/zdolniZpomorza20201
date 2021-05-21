@@ -1,10 +1,8 @@
 import socket
 import threading
-<<<<<<< HEAD
-from gui import *
-=======
 
->>>>>>> refs/remotes/origin/intergracja-serwer
+from gui import *
+
 class Epserver:
     RUNNING=False
     def __init__(self,ip=None, port=37234):

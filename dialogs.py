@@ -4,10 +4,9 @@ from enum import Enum
 
 from PIL import ImageTk, Image
 from epserver import *
-<<<<<<< HEAD
-=======
+
 import gui
->>>>>>> refs/remotes/origin/intergracja-serwer
+
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -87,10 +86,9 @@ def startServer():
     global sv
     if sv is None:
         sv = Epserver()
-<<<<<<< HEAD
+
         serverStatusUI.toggleStatus(True)
-=======
->>>>>>> refs/remotes/origin/intergracja-serwer
+
     #if sv.RUNNING == False:
     #    if sv.start() == True:
     #        serverStatusUI.toggleStatus(True)

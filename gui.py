@@ -4,11 +4,8 @@ from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
 import dialogs
-<<<<<<< HEAD
 buffor=[]
-=======
 from sys import platform
->>>>>>> refs/remotes/origin/intergracja-serwer
 class programMode(Enum):
     normal = 0
     client = 1
@@ -170,13 +167,7 @@ class ePaintGUI:
         for i in range(maxnum):
             self.x = int(event.x + (float(i)/maxnum * xdiff))
             self.y = int(event.y + (float(i)/maxnum * ydiff))
-<<<<<<< HEAD
-            self.freeDraw(thickness=self.counter, color=self.col)
-        buffor.append(self.x1)
-        buffor.append(self.y1)
-=======
             self.freeDraw(self.x, self.y, thickness=self.counter, color=self.col)
->>>>>>> refs/remotes/origin/intergracja-serwer
         self.x1 = event.x
         self.y1 = event.y
         buffor.append(self.x1)
