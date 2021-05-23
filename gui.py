@@ -1,5 +1,5 @@
 import threading
-from tkinter import *
+import tkinter as tk
 from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
@@ -39,7 +39,7 @@ class ePaintGUI:
             self.counter), style="CurrentColor.TLabel")
         self.currThick.grid(row=0, column=1, sticky="W")
         self.thicknessSlider = Scale(master, from_=1, to=10,
-                                     command=self.updateThick, variable=IntVar(), value=1)
+                                     command=self.updateThick, variable=tk.IntVar(), value=1)
         self.thicknessSlider.grid(row=0, column=3)
 
         # resetowanie canva
@@ -48,8 +48,11 @@ class ePaintGUI:
         self.resetButton.grid(row=0, column=6)
 
         # ustawienie canva
-        self.canva = Canvas(master, background="#FEFEFE", cursor="pencil")
+        self.canva = tk.Canvas(master, background="#FEFEFE", cursor="pencil")
         self.canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
+
+        # Przyciski do kolorów
+        
 
         self.bindEvents()
         self.createMenu(master)
@@ -65,40 +68,25 @@ class ePaintGUI:
         self.counter = 1
         self.thicknessSlider.set(1)
         self.currThick.config(text=str(self.counter))
-        self.blackButton = self.canva.create_rectangle(
-            10, 10, 30, 30, fill="#000000")
-        self.redButton = self.canva.create_rectangle(
-            10, 35, 30, 55, fill="#FF0000")
-        self.greenButton = self.canva.create_rectangle(
-            10, 60, 30, 80, fill="#00FF00")
-        self.blueButton = self.canva.create_rectangle(
-            10, 85, 30, 105, fill="#0000FF")
-        self.whiteButton = self.canva.create_rectangle(
-            10, 110, 30, 130, fill="#FFFFFF")
-        self.customColorButton = self.canva.create_oval(
-            10, 135, 30, 155, fill="#000000", outline="#000000")
 
-        self.chooseColor("#000000")
+        def createColorButton(img,posx,posy,color):
+            colorBtn = tk.Button(self.master, text = "", image=fakeimg, anchor = "w", width = 15, height=15, background=color,activebackground = "#FFFFFF", relief = "solid", compound="c",borderwidth=1,command=lambda: self.chooseColor(color))
+            self.canva.create_window(posx,posy, anchor="nw", window=colorBtn)
+            colorBtn.image = fakeimg
 
-        self.canva.tag_bind(self.blackButton, "<Button-1>",
-                            lambda w: self.chooseColor("#000000"))
-        self.canva.tag_bind(self.redButton, "<Button-1>",
-                            lambda w: self.chooseColor("#FF0000"))
-        self.canva.tag_bind(self.greenButton, "<Button-1>",
-                            lambda w: self.chooseColor("#00FF00"))
-        self.canva.tag_bind(self.blueButton, "<Button-1>",
-                            lambda w: self.chooseColor("#0000FF"))
-        self.canva.tag_bind(self.whiteButton, "<Button-1>",
-                            lambda w: self.chooseColor("#FFFFFF"))
-        self.canva.tag_bind(self.customColorButton, "<Button-1>",
-                            lambda w: self.chooseColor("custom"))
-
+        fakeimg = tk.PhotoImage(width=1, height=1)
+        createColorButton(fakeimg,10,10,"#000000")
+        createColorButton(fakeimg,10,35,"#FF0000")
+        createColorButton(fakeimg,10,60,"#00FF00")
+        createColorButton(fakeimg,10,85,"#0000FF")
+        createColorButton(fakeimg,10,110,"#FFFFFF")
+        
     # zmiana koloru
     def createMenu(self,root):
         # Create menu
-        menu = Menu(root)
+        menu = tk.Menu(root)
         # Menu pliku
-        filemenu = Menu(menu,tearoff=0)
+        filemenu = tk.Menu(menu,tearoff=0)
         filemenu.add_command(label="Otwórz")
         filemenu.add_command(label="Połącz z serwerem", command=dialogs.connectWindow)
         filemenu.add_command(label="Uruchom serwer", command=dialogs.serverManWindow)
@@ -111,7 +99,7 @@ class ePaintGUI:
         filemenu.add_command(label="Wyjście", command=root.quit())
         menu.add_cascade(label="Plik", menu=filemenu)
         # Menu edycji
-        editmenu = Menu(menu,tearoff=0)
+        editmenu = tk.Menu(menu,tearoff=0)
         editmenu.add_command(label="Kopiuj")
         editmenu.add_command(label="Wklej")
         editmenu.add_command(label="Obróć w prawo")
@@ -123,7 +111,7 @@ class ePaintGUI:
 
         menu.add_cascade(label="Edycja", menu=editmenu)
         # Menu pomocy
-        helpmenu = Menu(menu, tearoff=0)
+        helpmenu = tk.Menu(menu, tearoff=0)
         helpmenu.add_command(label="O aplikacji", command=dialogs.helpApp)
         menu.add_cascade(label="Pomoc", menu=helpmenu)
         self.master.config(menu=menu)
@@ -149,10 +137,8 @@ class ePaintGUI:
 
     # rysowanie dowolne na canva
     def freeDraw(self,x,y, thickness=1, color="#000000"):
-        self.x = x
-        self.y = y
-        self.canva.create_oval(self.x-thickness, self.y-thickness, self.x+thickness,
-                               self.y+thickness, fill=color, outline=color)
+        self.canva.create_oval(x-thickness, y-thickness, x+thickness,
+                               y+thickness, fill=color, outline=color)
 
     def m1click(self, event):
         self.x1 = event.x
@@ -192,14 +178,15 @@ class ePaintGUI:
         objs = self.getAllIDs()
         for o in objs:
             coords = self.canva.coords(o)
-            if mode == 0: # W pionie
-                x1 = width - coords[0]
-                roznica = coords[0] - coords[2]
-                self.canva.coords(o, x1, coords[1], x1+roznica, coords[3])
-            elif mode == 1: # W poziomie
-                y1 = height - coords[1]
-                roznica = coords[1] - coords[3]
-                self.canva.coords(o, coords[0], y1 , coords[2], y1+roznica)
+            if len(coords)>3:
+                if mode == 0: # W pionie
+                    x1 = width - coords[0]
+                    roznica = coords[0] - coords[2]
+                    self.canva.coords(o, x1, coords[1], x1+roznica, coords[3])
+                elif mode == 1: # W poziomie
+                    y1 = height - coords[1]
+                    roznica = coords[1] - coords[3]
+                    self.canva.coords(o, coords[0], y1 , coords[2], y1+roznica)
     def getAllIDs(self):
         return self.canva.find_all()
 
@@ -216,7 +203,7 @@ class ePaintGUI:
 myWindow = None
 def initGui():
     global myWindow
-    root = Tk()
+    root = tk.Tk()
     myWindow = ePaintGUI(root)
     myWindow.resetCanva()
     root.mainloop()
