@@ -1,5 +1,7 @@
 from tkinter import Menu
 import dialogs as dialogs
+from gui import myWindow
+
 
 menu = None
 def createMenu(root):
@@ -9,6 +11,7 @@ def createMenu(root):
     filemenu = Menu(menu,tearoff=0)
     filemenu.add_command(label="Otwórz")
     filemenu.add_command(label="Połącz z serwerem", command=dialogs.connectWindow)
+    filemenu.add_command(label="Uruchom serwer", command=dialogs.serverManWindow)
     filemenu.add_command(label="Zapisz")
     filemenu.add_command(label="Drukuj")
     filemenu.add_command(label="Wyślij faxem")
@@ -23,7 +26,7 @@ def createMenu(root):
     editmenu.add_command(label="Wklej")
     editmenu.add_command(label="Obróć w prawo")
     editmenu.add_command(label="Obróć w lewo")
-    editmenu.add_command(label="Odbij w poziomie")
+    editmenu.add_command(label="Odbij w poziomie", command=lambda: myWindow.rotateObjects())
     editmenu.add_command(label="Odbij w pionie")
     editmenu.add_command(label="Resetuj ustawienia pędzla")
     editmenu.add_command(label="Wyczyść")
