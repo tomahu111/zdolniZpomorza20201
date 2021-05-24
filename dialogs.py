@@ -86,14 +86,7 @@ def startServer():
     global sv
     if sv is None:
         sv = Epserver()
-
         serverStatusUI.toggleStatus(True)
-
-    #if sv.RUNNING == False:
-    #    if sv.start() == True:
-    #        serverStatusUI.toggleStatus(True)
-    #    else:
-    #        messagewindow(msgboxtype.error, "Błąd", "Nie udało się uruchomić serwera")
     else:
         sv.stop()
         del sv

@@ -1,23 +1,91 @@
 import socket
 import threading
+import queue
+import time
 
 from gui import *
 
+
+class ClientThread(threading.Thread):
+    def __init__(self, client_sock):
+        threading.Thread.__init__(self)
+        self.queue = queue.Queue() # enkodowana wiadomosc powinna znalesc sie w kolejce (razem z headerem)
+        self.active = True
+        self.client_sock = client_sock
+
+    def addToQueue(self,item):
+        self.queue.put(item)
+
+    def run(self):
+        while self.active == True:
+            if self.queue.empty() == False:
+                print("Sending!")
+                self.client_sock.sendall(self.queue.get())
+
+class UberSocket(threading.Thread):
+    def __init__(self, ip, port=37234, headerlength=6):
+        threading.Thread.__init__(self)
+        self.client_thread_list = []
+        self.running = False
+        self.headerlength = headerlength
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind((ip,port))
+        self.sock.listen(5) # Maksymalnie 5 w kolejce
+
+    def run(self):
+        self.running = True
+
+        while self.running == True:
+            client_conn,client_addr = self.sock.accept()
+            client_thread = ClientThread(client_conn)
+            self.client_thread_list.append(client_thread)
+            client_thread.start()
+    def sendToQueueAll(self,msg):
+        for client in self.client_thread_list:
+            client.addToQueue(msg)
+
+    def prepMessage(self,data):
+        msg = f'{len(data):<{self.headerlength}}' + data # Koduje wiadomosc z naglowkiem zawierajacym dlugosc wiadomosci na poczatku
+        self.sendToQueueAll(bytes(msg,encoding="utf-8"))
+    def stop(self):
+        self.running = False
+        # TODO Zamknij wszystkie połączenia
+
+class Epclient2(threading.Thread):
+    def __init__(self,ip,port=37234,headerlength=6):
+        threading.Thread.__init__(self, daemon=True)
+        self.ip = ip
+        self.port = port
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect((self.ip,self.port))
+        self.headerlength = headerlength
+    
+    def run(self):
+        isNew = True
+        fullMsg = ''
+        while True:
+            msg = self.sock.recv(16).decode(encoding="utf-8")
+            if len(msg) == 0:
+                # Serwer się rozłączył!
+                print("serwer sie rozlaczyl")
+                break
+            if isNew == True:
+                msgLen = int(msg[:self.headerlength])
+                isNew = False
+            fullMsg += msg
+
+            if len(fullMsg) == msgLen + self.headerlength:
+                # Dostarczona pełna wiadomość
+                fullMsg = fullMsg[self.headerlength:]
+                print(fullMsg)
+                isNew = False
+                fullMsg = ''
+
+''' 
 class Epserver:
     RUNNING=False
     def __init__(self,ip=None, port=37234):
-        if ip is None:
-            self.ip = socket.gethostbyname(socket.gethostname())
-        else:
-            self.ip = ip
-        self.PORT = 37234
-        self.HOST = self.ip
-        self.BUFFER = 1024
-        self.server_socket = None
-        self.sv_thread = None
-        self.start()
-        #hostname = socket.gethostname()
-        #HOST = socket.gethostbyname(hostname)
+        customsock = UberSocket(ip,port)
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.HOST, self.PORT))
@@ -28,20 +96,9 @@ class Epserver:
         self.sv_thread.start()
 
     def serverthread(self):
-        #try:
         print("Wątek z serwerem uruchomiony!")
-        #self.client_socket, self.adr = self.server_socket.accept()
-        #info = "Witaj w ePaint 0.001".encode("utf8")
-        #client_socket.send(info)
         self.receive()
         print("...")
-        #except:
-        #    print("closed")
-        #while self.RUNNING == True:
-        #    print('Połączenie z ', adr[0], 'Port: ', adr[1])
-        #    # FROM CLIENT
-        #    host_ip = client_socket.recv(BUFFER).decode("utf8")
-        #    print(host_ip)
     def receive(self):
         global buffor
         self.clients=[]
@@ -63,6 +120,7 @@ class Epserver:
                         for i in self.clients:
                             self.client_socket.send(str(buffor).encode("utf8"))
                         buffor.clear()
+    
     def stop(self):
         #self.server_socket.close()
         self.RUNNING=False
@@ -125,5 +183,5 @@ class epclient:
                     self.guiInstance.freeDraw(x,y, thickness, color)
             
                 #canva.create_oval(x-1, y-1, x+1, y+1, fill="black", outline="black")
-
+'''
 
