@@ -57,11 +57,15 @@ class Epserver:
 
             #info = "Witaj w ePaint 0.001".encode("utf8")
             #client_socket.send(info)
+            licznik=0
             if len(self.clients)>0:
                 while True:
                     if len(buffor)>=6:
                         for i in self.clients:
-                            self.client_socket.send(str(buffor).encode("utf8"))
+                            self.client_socket.send((str(buffor)+"\n").encode("utf8"))
+                            print(buffor)
+                            licznik=licznik+1
+                            print(licznik)
                         buffor.clear()
     def stop(self):
         #self.server_socket.close()
