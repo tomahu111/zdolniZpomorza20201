@@ -81,19 +81,10 @@ def connectWindow():
     label.pack(side=tk.TOP)
     textinput.pack(side=tk.TOP)
     connectbutton.pack(side=tk.TOP)
-sv=None
-def startServer():
-    global sv
-    if sv is None:
-        sv = Epserver()
-        serverStatusUI.toggleStatus(True)
-    else:
-        sv.stop()
-        del sv
-        sv=None
-        #sv.stop()
-        serverStatusUI.toggleStatus(False)
 
+def startServer():
+    from gui import myWindow
+    
 def serverManWindow():
     serverWindow = tk.Toplevel()
     serverWindow.resizable(False,False)
