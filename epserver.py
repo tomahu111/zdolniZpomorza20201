@@ -102,7 +102,8 @@ class epclient:
             print("TEST")
             info = self.client_socket.recv(self.BUFFER).decode("utf8")
             try:
-                self.converted = eval((info))
+                #self.converted = eval((info))
+                self.converted = info
             except:
                 #print("Cos jest nie tak")
                 self.converted = []
@@ -113,20 +114,41 @@ class epclient:
         #global self.converted
         while self.RUNNING:
             if len(self.converted) > 0:
-                x1 = self.converted[0]
-                y1 = self.converted[1]
-                x2 = self.converted[2]
-                y2 = self.converted[3]
-                color = self.converted[4]
-                thickness = int(self.converted[5])
-                self.converted.clear()
-                xdiff = x1-x2
-                ydiff = y1-y2
-                maxnum = max(abs(xdiff), abs(ydiff))
-                for i in range(maxnum):
-                    x = int(x2 + (float(i)/maxnum * xdiff))
-                    y = int(y2 + (float(i)/maxnum * ydiff))
-                    self.guiInstance.freeDraw(x,y, thickness, color)
+                if len(self.converted)>40:
+                    self.converted.split('\n')
+                    for i in range(len(self.converted)):
+                        temp=eval((self.converted[i]))
+                        x1 = temp[0]
+                        y1 = temp[1]
+                        x2 = temp[2]
+                        y2 = temp[3]
+                        color = temp[4]
+                        thickness = int(temp[5])
+                        #self.converted.clear()
+                        xdiff = x1-x2
+                        ydiff = y1-y2
+                        maxnum = max(abs(xdiff), abs(ydiff))
+                        for i in range(maxnum):
+                            x = int(x2 + (float(i)/maxnum * xdiff))
+                            y = int(y2 + (float(i)/maxnum * ydiff))
+                            self.guiInstance.freeDraw(x,y, thickness, color)
+                    self.converted.clear()
+                else:
+                    self.converted=eval((self.converted))
+                    x1 = self.converted[0]
+                    y1 = self.converted[1]
+                    x2 = self.converted[2]
+                    y2 = self.converted[3]
+                    color = self.converted[4]
+                    thickness = int(self.converted[5])
+                    self.converted.clear()
+                    xdiff = x1-x2
+                    ydiff = y1-y2
+                    maxnum = max(abs(xdiff), abs(ydiff))
+                    for i in range(maxnum):
+                        x = int(x2 + (float(i)/maxnum * xdiff))
+                        y = int(y2 + (float(i)/maxnum * ydiff))
+                        self.guiInstance.freeDraw(x,y, thickness, color)
             
                 #canva.create_oval(x-1, y-1, x+1, y+1, fill="black", outline="black")
 
