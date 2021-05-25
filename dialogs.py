@@ -129,4 +129,5 @@ def connectToServer(ip):
     # Zmien tryb na taki gdzie nie mozna rysowac
     myWindow.changeMode(gui.programMode.client)
     # Tworzymy objekt epclient, dopóki istnieje program będzie odbierał informacje
-    clientprog = epclient(myWindow, ip)
+    clientprog = Epclient2(ip, guiInstance=myWindow)
+    clientprog.start()

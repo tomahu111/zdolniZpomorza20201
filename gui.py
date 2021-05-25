@@ -166,13 +166,14 @@ class ePaintGUI:
             self.pos1 = (event.x, event.y)
         # Wyslij do wszystkich klientow starą i nową pozycje
             # Format danych: [(pos1), (pos2), thick, color]
-            data = [self.pos1, pos, self.currThick, self.col]
+            data = [self.pos1, pos, self.counter, self.col]
             if self.mode == programMode.server:
                 self.packAndSend(data)
 
     def packAndSend(self,data):
         # pickle the data
-        print(pickle.dumps(data))
+        data = pickle.dumps(data)
+        self.server.prepMessage(data,isEncoded=True)
     # Zmiana funkcjonalności programu
     def unbindEvents(self):
         self.canva.unbind("<Button-1>")
@@ -213,6 +214,19 @@ class ePaintGUI:
                 self.server.start()
                 # svThread = threading.Thread(target=self.serverSendThread)
                 # svThread.start()
+    def drawFromData(self, data):
+        pos1 = data[0]
+        pos2 = data[1]
+        thickness = data[2]
+        color = data[3]
+        
+        posDiff = tuple(map(operator.sub, pos1, pos2))
+        maxnum = max(abs(posDiff[0]), abs(posDiff[1]))
+        for i in range(maxnum):
+            newPos = ( int(pos1[0] + (float(i)/maxnum * posDiff[0])), int(pos1[1] + (float(i)/maxnum * posDiff[1])) )
+            self.freeDraw(newPos, thickness=thickness, color=color)
+        self.freeDraw(pos1, thickness=thickness, color=color)
+
     # def serverSendThread(self):
     #     print("Server send thread started")
     #     while True:
