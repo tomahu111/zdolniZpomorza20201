@@ -17,10 +17,12 @@ class ClientThread(threading.Thread):
         self.queue.put(item)
 
     def run(self):
+        print("client thread started")
         while self.active == True:
             if self.queue.empty() == False:
                 print("Sending!")
                 self.client_sock.sendall(self.queue.get())
+            time.sleep(0.1)
 
 class UberSocket(threading.Thread):
     def __init__(self, ip, port=37234, headerlength=6):
@@ -40,6 +42,7 @@ class UberSocket(threading.Thread):
             client_thread = ClientThread(client_conn)
             self.client_thread_list.append(client_thread)
             client_thread.start()
+            print("Someone connected!")
     def sendToQueueAll(self,msg):
         for client in self.client_thread_list:
             client.addToQueue(msg)
@@ -73,7 +76,7 @@ class Epclient2(threading.Thread):
                 msgLen = int(msg[:self.headerlength])
                 isNew = False
             fullMsg += msg
-
+            print("[TMP]", fullMsg)
             if len(fullMsg) == msgLen + self.headerlength:
                 # Dostarczona pełna wiadomość
                 fullMsg = fullMsg[self.headerlength:]

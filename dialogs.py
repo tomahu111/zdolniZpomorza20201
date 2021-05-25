@@ -84,6 +84,8 @@ def connectWindow():
 
 def startServer():
     from gui import myWindow
+    print("Starting...")
+    myWindow.changeMode(programMode.server)
     
 def serverManWindow():
     serverWindow = tk.Toplevel()

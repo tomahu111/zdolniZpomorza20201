@@ -3,7 +3,15 @@ import tkinter as tk
 from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
+from typing import Tuple
 import dialogs
+import operator
+import epserver
+import socket
+import pickle
+import queue
+import time
+
 buffor=[]
 from sys import platform
 class programMode(Enum):
@@ -18,8 +26,7 @@ class ePaintGUI:
         self.mode = programMode.normal
         self.master = master
         self.col = "#000000"
-        self.x1, self.x2 = 0, 0
-        self.x, self.y = 1, 1
+        self.pos1 = (0,0)
         self.counter = 1
         self.colorLabel = "white"
         # zmienne
@@ -50,9 +57,10 @@ class ePaintGUI:
         # ustawienie canva
         self.canva = tk.Canvas(master, background="#FEFEFE", cursor="pencil")
         self.canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
-
-        # Przyciski do kolorów
+        self.m1depressed = False
         
+        # Serwer
+        self.sendingQueue = queue.Queue()
 
         self.bindEvents()
         self.createMenu(master)
@@ -136,41 +144,43 @@ class ePaintGUI:
                         background=self.col, foreground=textcolor)
 
     # rysowanie dowolne na canva
-    def freeDraw(self,x,y, thickness=1, color="#000000"):
-        self.canva.create_oval(x-thickness, y-thickness, x+thickness,
-                               y+thickness, fill=color, outline=color)
+    def freeDraw(self,pos, thickness=1, color="#000000"):
+        self.canva.create_oval(pos[0]-thickness, pos[1]-thickness, pos[0]+thickness,
+                               pos[1]+thickness, fill=color, outline=color)
+    
+    def m1down(self,event):
+        self.m1depressed = True
+        # Zapisz pozycje poprzedniego klikniecia
+        self.pos1 = (event.x, event.y)
+        self.freeDraw(self.pos1, thickness=self.counter, color=self.col)
+    def m1up(self,event):
+        self.m1depressed = False
+    def m1move(self,event):
+        if self.m1depressed == True:
+            pos = (event.x, event.y)
+            posDiff = tuple(map(operator.sub, self.pos1, pos))
+            maxnum = max(abs(posDiff[0]), abs(posDiff[1]))
+            for i in range(maxnum):
+                newPos = ( int(pos[0] + (float(i)/maxnum * posDiff[0])), int(pos[1] + (float(i)/maxnum * posDiff[1])) )
+                self.freeDraw(newPos, thickness=self.counter, color=self.col)
+            self.pos1 = (event.x, event.y)
+        # Wyslij do wszystkich klientow starą i nową pozycje
+            # Format danych: [(pos1), (pos2), thick, color]
+            data = [self.pos1, pos, self.currThick, self.col]
+            if self.mode == programMode.server:
+                self.packAndSend(data)
 
-    def m1click(self, event):
-        self.x1 = event.x
-        self.y1 = event.y
-        self.freeDraw(self.x1, self.y1, thickness=self.counter, color=self.col)
-
-    def m_move(self, event):
-        global buffor
-        xdiff = self.x1-event.x
-        ydiff = self.y1-event.y
-        maxnum = max(abs(xdiff), abs(ydiff))
-        for i in range(maxnum):
-            self.x = int(event.x + (float(i)/maxnum * xdiff))
-            self.y = int(event.y + (float(i)/maxnum * ydiff))
-            self.freeDraw(self.x, self.y, thickness=self.counter, color=self.col)
-        buffor.append(self.x)
-        buffor.append(self.y)
-        self.x1 = event.x
-        self.y1 = event.y
-        buffor.append(self.x1)
-        buffor.append(self.y1)
-        buffor.append(self.col)
-        buffor.append(self.counter)
-        #print(self.x1, self.y1, self.x, self.y)
-
+    def packAndSend(self,data):
+        # pickle the data
+        print(pickle.dumps(data))
     # Zmiana funkcjonalności programu
     def unbindEvents(self):
         self.canva.unbind("<Button-1>")
         self.canva.unbind("<B1-Motion>")
     def bindEvents(self):
-        self.canva.bind("<Button-1>", self.m1click)
-        self.canva.bind("<B1-Motion>", self.m_move)
+        self.canva.bind("<Button-1>", self.m1down)
+        self.canva.bind("<B1-Motion>", self.m1move)
+        self.canva.bind("<ButtonRelease-1>", self.m1up)
 
     def mirrorObjects(self,mode):
         width = self.canva.winfo_screenwidth()
@@ -195,10 +205,23 @@ class ePaintGUI:
         if mode in programMode:
             if mode == programMode.client:
                 self.unbindEvents()
-            elif mode == programMode.normal or mode == programMode.server:
+            elif mode == programMode.server:
                 self.bindEvents()
-
-
+                print("uruchamianie serwera")
+                # uruchom serwer (utworzenie obiektu UberSocket)
+                self.server = epserver.UberSocket(ip=socket.gethostname())
+                self.server.start()
+                # svThread = threading.Thread(target=self.serverSendThread)
+                # svThread.start()
+    # def serverSendThread(self):
+    #     print("Server send thread started")
+    #     while True:
+    #         pass
+    #         time.sleep(0.1)
+    #     # while self.mode == programMode.server:
+    #     #     if self.sendingQueue.empty() == False:
+    #     #         self.server.prepMessage(self.sendingQueue.get())
+    #     # print("Server send thread ended")
 
 myWindow = None
 def initGui():
