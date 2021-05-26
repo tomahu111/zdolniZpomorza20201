@@ -132,7 +132,6 @@ class epclient:
                             x = int(x2 + (float(i)/maxnum * xdiff))
                             y = int(y2 + (float(i)/maxnum * ydiff))
                             self.guiInstance.freeDraw(x,y, thickness, color)
-                    self.converted=''
                 else:
                     self.converted=self.converted.rstrip(self.converted[-1])
                     self.converted=eval((self.converted))
