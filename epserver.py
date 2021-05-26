@@ -6,6 +6,7 @@ import pickle
 
 from gui import *
 
+HEADERLEN=10
 
 class ClientThread(threading.Thread):
     def __init__(self, client_sock):
@@ -21,7 +22,11 @@ class ClientThread(threading.Thread):
         print("client thread started")
         while self.active == True:
             if self.queue.empty() == False:
-                self.client_sock.sendall(self.queue.get())
+                msg = self.queue.get()
+                send_len = str(len(msg)).encode("utf-8")
+                send_len += b' ' * (HEADERLEN - len(send_len))
+                self.client_sock.sendall(send_len)
+                self.client_sock.sendall(msg)
 
             time.sleep(0.01)
 
@@ -50,12 +55,12 @@ class UberSocket(threading.Thread):
 
     def prepMessage(self,data,isEncoded=False):
         # Koduje wiadomosc z naglowkiem zawierajacym dlugosc wiadomosci na poczatku
-        if isEncoded == False:
-            msg = f'{len(data):<{self.headerlength}}' + data
-            msg = bytes(msg, encoding="utf-8")
-        else:
-            msg = bytes(f'{len(data):<{self.headerlength}}', encoding="utf-8") + data
-        self.sendToQueueAll(msg)
+        # if isEncoded == False:
+        #     msg = f'{len(data):<{self.headerlength}}' + data
+        #     msg = bytes(msg, encoding="utf-8")
+        # else:
+        #     msg = bytes(f'{len(data):<{self.headerlength}}', encoding="utf-8") + data
+        self.sendToQueueAll(data)
     def stop(self):
         self.running = False
         # TODO Zamknij wszystkie połączenia
@@ -72,36 +77,18 @@ class Epclient2(threading.Thread):
     
     def run(self):
         print("Client recv thread started")
-        isNew = True
-        fullMsg = b''
+        #isNew = True
         while True:
-            msg = self.sock.recv(16)
-            if len(msg) == 0:
-                # Serwer się rozłączył!
-                print("serwer sie rozlaczyl")
-                break
-            fullMsg += msg
-            print(fullMsg)
-            if isNew == True:
-                #print("recvd: ", msg)
-                msgLen = int(fullMsg[:self.headerlength])
-                isNew = False
-            #print("[TMP]", fullMsg)
-            print("msg len: ", str(len(fullMsg)), "req:", str(msgLen + self.headerlength))
-            if len(fullMsg) >= msgLen + self.headerlength:
-                # Dostarczona pełna wiadomość
-                upData = pickle.loads(fullMsg[self.headerlength:msgLen+self.headerlength])
-                #upData = upData.decode("utf-8")
-                self.guiInstance.drawFromData(upData)
-                #print(fullMsg[self.headerlength:msgLen+self.headerlength].decode("utf-8"))
-                isNew = True
-                #fullMsg = b''
-            if len(fullMsg) > msgLen + self.headerlength:
-                #print("wiadomosc za dluga")
-                fullMsg = fullMsg[msgLen:]
-            if len(fullMsg) == msgLen + self.headerlength:
-                #print("czyszczenie")
-                fullMsg = b''
+            full_msg = b''
+            msg_len = self.sock.recv(HEADERLEN).decode("utf-8")
+            if msg_len:
+                msg_len = int(msg_len)
+                while msg_len:
+                    newbuf = self.sock.recv(msg_len)
+                    full_msg += newbuf
+                    msg_len -= len(newbuf)
+                unpackedMsg = pickle.loads(full_msg)
+                self.guiInstance.drawFromData(unpackedMsg[0], unpackedMsg[1], unpackedMsg[2], unpackedMsg[3])
 '''
 class Epserver:
     RUNNING=False

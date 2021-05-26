@@ -166,7 +166,6 @@ class ePaintGUI:
         # Wyslij do wszystkich klientow starą i nową pozycje
             # Format danych: [(pos1), (pos2), thick, color]
             data = [self.pos1, pos, self.counter, self.col]
-            self.pos1 = (event.x, event.y)
             if self.mode == programMode.server:
                 self.packAndSend(data)
             self.pos1 = (event.x, event.y)
@@ -215,18 +214,13 @@ class ePaintGUI:
                 self.server.start()
                 # svThread = threading.Thread(target=self.serverSendThread)
                 # svThread.start()
-    def drawFromData(self, data):
-        pos1 = data[0]
-        pos2 = data[1]
-        thickness = data[2]
-        color = data[3]
-        
+    def drawFromData(self, pos1, pos2, thickness, color):
         posDiff = tuple(map(operator.sub, pos1, pos2))
         maxnum = max(abs(posDiff[0]), abs(posDiff[1]))
         for i in range(maxnum):
             newPos = ( int(pos1[0] + (float(i)/maxnum * posDiff[0])), int(pos1[1] + (float(i)/maxnum * posDiff[1])) )
             self.freeDraw(newPos, thickness=thickness, color=color)
-        self.freeDraw(pos1, thickness=thickness, color=color)
+        #self.freeDraw(pos1, thickness=thickness, color=color)
 
     # def serverSendThread(self):
     #     print("Server send thread started")
