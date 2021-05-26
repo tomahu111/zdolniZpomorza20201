@@ -22,7 +22,9 @@ class ClientThread(threading.Thread):
         while self.active == True:
             if self.queue.empty() == False:
                 print("Sending!")
-                self.client_sock.sendall(self.queue.get())
+                temp=self.queue.get()
+                print(temp)
+                self.client_sock.sendall(temp)
             time.sleep(0.01)
 
 class UberSocket(threading.Thread):

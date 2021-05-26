@@ -163,10 +163,11 @@ class ePaintGUI:
             for i in range(maxnum):
                 newPos = ( int(pos[0] + (float(i)/maxnum * posDiff[0])), int(pos[1] + (float(i)/maxnum * posDiff[1])) )
                 self.freeDraw(newPos, thickness=self.counter, color=self.col)
-            self.pos1 = (event.x, event.y)
+            #self.pos1 = (event.x, event.y)
         # Wyslij do wszystkich klientow starą i nową pozycje
             # Format danych: [(pos1), (pos2), thick, color]
             data = [self.pos1, pos, self.counter, self.col]
+            self.pos1 = (event.x, event.y)
             if self.mode == programMode.server:
                 self.packAndSend(data)
 
