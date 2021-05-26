@@ -1,6 +1,6 @@
 from tkinter import Menu
 import dialogs as dialogs
-from gui import myWindow
+from gui import ePaintGUI, myWindow
 
 
 menu = None
@@ -14,8 +14,6 @@ def createMenu(root):
     filemenu.add_command(label="Uruchom serwer", command=dialogs.serverManWindow)
     filemenu.add_command(label="Zapisz")
     filemenu.add_command(label="Drukuj")
-    filemenu.add_command(label="Wyślij faxem")
-    filemenu.add_command(label="Wyślij e-mailem")
     filemenu.add_separator()
     filemenu.add_command(label="Ustawienia")
     filemenu.add_command(label="Wyjście", command=root.quit())
@@ -29,7 +27,7 @@ def createMenu(root):
     editmenu.add_command(label="Odbij w poziomie", command=lambda: myWindow.rotateObjects())
     editmenu.add_command(label="Odbij w pionie")
     editmenu.add_command(label="Resetuj ustawienia pędzla")
-    editmenu.add_command(label="Wyczyść")
+    editmenu.add_command(label="Wyczyść", command=lambda: root.resetCanva())
 
     menu.add_cascade(label="Edycja", menu=editmenu)
     # Menu pomocy

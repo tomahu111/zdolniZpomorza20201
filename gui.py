@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter.ttk import *
 from tkinter import colorchooser
 from enum import Enum
+from PIL import Image
 import dialogs
 buffor=[]
 from sys import platform
@@ -87,27 +88,23 @@ class ePaintGUI:
         menu = tk.Menu(root)
         # Menu pliku
         filemenu = tk.Menu(menu,tearoff=0)
-        filemenu.add_command(label="Otwórz")
+        #filemenu.add_command(label="Otwórz")
         filemenu.add_command(label="Połącz z serwerem", command=dialogs.connectWindow)
         filemenu.add_command(label="Uruchom serwer", command=dialogs.serverManWindow)
-        filemenu.add_command(label="Zapisz")
-        filemenu.add_command(label="Drukuj")
-        filemenu.add_command(label="Wyślij faxem")
-        filemenu.add_command(label="Wyślij e-mailem")
+        #filemenu.add_command(label="Zapisz", command=lambda: self.saveCanva())
+        #filemenu.add_command(label="Drukuj")
+        #filemenu.add_command(label="Wyślij faxem")
+        #filemenu.add_command(label="Wyślij e-mailem")
         filemenu.add_separator()
-        filemenu.add_command(label="Ustawienia")
-        filemenu.add_command(label="Wyjście", command=root.quit())
+        #filemenu.add_command(label="Ustawienia")
+        filemenu.add_command(label="Wyjście", command=self.master.destroy)
         menu.add_cascade(label="Plik", menu=filemenu)
         # Menu edycji
         editmenu = tk.Menu(menu,tearoff=0)
-        editmenu.add_command(label="Kopiuj")
-        editmenu.add_command(label="Wklej")
-        editmenu.add_command(label="Obróć w prawo")
-        editmenu.add_command(label="Obróć w lewo")
         editmenu.add_command(label="Odbij w poziomie", command=lambda: self.mirrorObjects(0))
         editmenu.add_command(label="Odbij w pionie", command=lambda: self.mirrorObjects(1))
-        editmenu.add_command(label="Resetuj ustawienia pędzla")
-        editmenu.add_command(label="Wyczyść")
+        editmenu.add_command(label="Resetuj ustawienia pędzla", command=lambda: self.resetPedzla())
+        editmenu.add_command(label="Wyczyść", command=lambda: self.resetCanva())
 
         menu.add_cascade(label="Edycja", menu=editmenu)
         # Menu pomocy
@@ -116,6 +113,11 @@ class ePaintGUI:
         menu.add_cascade(label="Pomoc", menu=helpmenu)
         self.master.config(menu=menu)
 
+    def resetPedzla(self):
+        self.chooseColor("#000000")
+        self.updateThick(1)
+        self.thicknessSlider.set(0)
+        
     def chooseColor(self, newColor):
         self.col
         if newColor == "custom":
@@ -197,6 +199,15 @@ class ePaintGUI:
                 self.unbindEvents()
             elif mode == programMode.normal or mode == programMode.server:
                 self.bindEvents()
+    
+    def saveCanva(self):
+        # save postscipt image 
+        fileName='whiteboardSave'
+        self.canva.postscript(file = fileName + '.eps') 
+        # use PIL to convert to PNG 
+        img = Image.open(fileName + '.eps') 
+        img.save(fileName + '.png', 'png') 
+
 
 
 
