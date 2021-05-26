@@ -90,10 +90,10 @@ class Epclient2(threading.Thread):
             print("msg len: ", str(len(fullMsg)), "req:", str(msgLen + self.headerlength))
             if len(fullMsg) >= msgLen + self.headerlength:
                 # Dostarczona pełna wiadomość
-                #upData = pickle.loads(fullMsg)
-                #upData = fullMsg.decode("utf-8")
-                #self.guiInstance.drawFromData(upData)
-                print(fullMsg[self.headerlength:msgLen+self.headerlength].decode("utf-8"))
+                upData = pickle.loads(fullMsg[self.headerlength:msgLen+self.headerlength])
+                #upData = upData.decode("utf-8")
+                self.guiInstance.drawFromData(upData)
+                #print(fullMsg[self.headerlength:msgLen+self.headerlength].decode("utf-8"))
                 isNew = True
                 #fullMsg = b''
             if len(fullMsg) > msgLen + self.headerlength:
