@@ -166,6 +166,7 @@ class ePaintGUI:
         # Wyslij do wszystkich klientow starą i nową pozycje
             # Format danych: [(pos1), (pos2), thick, color]
             data = [self.pos1, pos, self.counter, self.col]
+            self.pos1 = (event.x, event.y)
             if self.mode == programMode.server:
                 self.packAndSend(data)
             self.pos1 = (event.x, event.y)

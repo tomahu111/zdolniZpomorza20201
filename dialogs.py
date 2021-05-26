@@ -7,6 +7,7 @@ from epserver import *
 
 import gui
 
+server_started=False
 
 def messagewindow(type, title, message):
     if type == msgboxtype.info:
@@ -83,9 +84,16 @@ def connectWindow():
     connectbutton.pack(side=tk.TOP)
 
 def startServer():
+    global server_started
     from gui import myWindow
     print("Starting...")
     myWindow.changeMode(programMode.server)
+    if(server_started):
+        serverStatusUI.statusLabel['text']='Wyłączony'
+        server_started=False
+    else:
+        serverStatusUI.statusLabel['text']='Włączony'
+        server_started=True
     
 def serverManWindow():
     serverWindow = tk.Toplevel()
