@@ -134,6 +134,7 @@ class epclient:
                             self.guiInstance.freeDraw(x,y, thickness, color)
                     self.converted.clear()
                 else:
+                    self.converted=self.converted.rstrip(self.converted[-1])
                     self.converted=eval((self.converted))
                     x1 = self.converted[0]
                     y1 = self.converted[1]
