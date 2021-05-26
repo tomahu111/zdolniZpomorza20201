@@ -108,6 +108,7 @@ class epclient:
                 #print("Cos jest nie tak")
                 self.converted = []
             print(self.converted)
+            info=None
             #print(self.converted
 
     def draw(self):
@@ -117,7 +118,10 @@ class epclient:
                 if len(self.converted)>40:
                     self.converted.split('\n')
                     for i in range(len(self.converted)):
-                        temp=eval((self.converted[i]))
+                        temp=self.converted[i]
+                        if(temp[-1]=='\n'):
+                            temp=temp.rstrip(temp.rstrip[-1])
+                        temp=eval((temp))
                         x1 = temp[0]
                         y1 = temp[1]
                         x2 = temp[2]
@@ -132,6 +136,8 @@ class epclient:
                             x = int(x2 + (float(i)/maxnum * xdiff))
                             y = int(y2 + (float(i)/maxnum * ydiff))
                             self.guiInstance.freeDraw(x,y, thickness, color)
+                    
+
                 else:
                     self.converted=self.converted.rstrip(self.converted[-1])
                     self.converted=eval((self.converted))
