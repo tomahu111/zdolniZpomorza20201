@@ -6,5 +6,5 @@ ubsock = UberSocket(socket.gethostname())
 ubsock.start()
 
 while True:
-    ubsock.prepMessage("Test test tęśąż")
-    time.sleep(1)
+    ubsock.prepMessage("Test test abctt....")
+    time.sleep(3)

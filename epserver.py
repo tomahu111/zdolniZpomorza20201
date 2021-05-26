@@ -21,7 +21,6 @@ class ClientThread(threading.Thread):
         print("client thread started")
         while self.active == True:
             if self.queue.empty() == False:
-                print("Sending!")
                 self.client_sock.sendall(self.queue.get())
             time.sleep(0.01)
 
@@ -61,7 +60,7 @@ class UberSocket(threading.Thread):
         # TODO Zamknij wszystkie połączenia
 
 class Epclient2(threading.Thread):
-    def __init__(self,ip,guiInstance,port=37234,headerlength=6):
+    def __init__(self,ip,guiInstance=None,port=37234,headerlength=6):
         threading.Thread.__init__(self, daemon=True)
         self.ip = ip
         self.port = port
@@ -75,28 +74,34 @@ class Epclient2(threading.Thread):
         isNew = True
         fullMsg = b''
         while True:
-            msg = self.sock.recv(16)
+            msg = self.sock.recv(8)
             if len(msg) == 0:
                 # Serwer się rozłączył!
                 print("serwer sie rozlaczyl")
                 break
             if isNew == True:
-                msgLen = int(msg[:self.headerlength])
+                print("recvd: ", msg)
+                msgLen = int(fullMsg[:self.headerlength])
                 isNew = False
             fullMsg += msg
-            #print("[TMP]", fullMsg)
-            if len(fullMsg) == msgLen + self.headerlength:
+            print("[TMP]", fullMsg)
+            print("msg len: ", str(len(fullMsg)), "req:", str(msgLen + self.headerlength))
+            if len(fullMsg) >= msgLen + self.headerlength:
                 # Dostarczona pełna wiadomość
                 fullMsg = fullMsg[self.headerlength:]
-                upData = pickle.loads(fullMsg)
-                self.guiInstance.drawFromData(upData)
+                #upData = pickle.loads(fullMsg)
+                #upData = fullMsg.decode("utf-8")
+                #self.guiInstance.drawFromData(upData)
+                print(fullMsg.decode("utf-8"))
                 isNew = True
+                #fullMsg = b''
+            if len(fullMsg) > msgLen + self.headerlength:
+                print("wiadomosc za dluga")
+                fullMsg = fullMsg[msgLen+self.headerlength:]
+            if len(fullMsg) == msgLen + self.headerlength:
+                print("czyszczenie")
                 fullMsg = b''
-            elif len(fullMsg) > msgLen + self.headerlength:
-                isNew = True
-                fullMsg = b''
-
-''' 
+'''
 class Epserver:
     RUNNING=False
     def __init__(self,ip=None, port=37234):
