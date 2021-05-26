@@ -2,7 +2,6 @@ import threading
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import colorchooser
-from menus import createMenu
 import platform
 import socket
 from gui import *

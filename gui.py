@@ -95,18 +95,16 @@ class ePaintGUI:
         filemenu.add_command(label="Wyślij faxem")
         filemenu.add_command(label="Wyślij e-mailem")
         filemenu.add_separator()
-        filemenu.add_command(label="Ustawienia")
+        #filemenu.add_command(label="Ustawienia")
         filemenu.add_command(label="Wyjście", command=root.quit())
         menu.add_cascade(label="Plik", menu=filemenu)
         # Menu edycji
         editmenu = tk.Menu(menu,tearoff=0)
-        editmenu.add_command(label="Kopiuj")
-        editmenu.add_command(label="Wklej")
         editmenu.add_command(label="Obróć w prawo")
         editmenu.add_command(label="Obróć w lewo")
         editmenu.add_command(label="Odbij w poziomie", command=lambda: self.mirrorObjects(0))
         editmenu.add_command(label="Odbij w pionie", command=lambda: self.mirrorObjects(1))
-        editmenu.add_command(label="Resetuj ustawienia pędzla")
+        editmenu.add_command(label="Resetuj ustawienia pędzla", command=lambda: self.resetBrush())
         editmenu.add_command(label="Wyczyść")
 
         menu.add_cascade(label="Edycja", menu=editmenu)
@@ -198,6 +196,10 @@ class ePaintGUI:
             elif mode == programMode.normal or mode == programMode.server:
                 self.bindEvents()
 
+    def resetBrush(self):
+        self.updateThick(1)
+        self.thicknessSlider.set(1)
+        self.chooseColor("#000000")
 
 
 myWindow = None
