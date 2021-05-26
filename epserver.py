@@ -74,32 +74,32 @@ class Epclient2(threading.Thread):
         isNew = True
         fullMsg = b''
         while True:
-            msg = self.sock.recv(8)
+            msg = self.sock.recv(16)
             if len(msg) == 0:
                 # Serwer się rozłączył!
                 print("serwer sie rozlaczyl")
                 break
+            fullMsg += msg
+            print(fullMsg)
             if isNew == True:
-                print("recvd: ", msg)
+                #print("recvd: ", msg)
                 msgLen = int(fullMsg[:self.headerlength])
                 isNew = False
-            fullMsg += msg
-            print("[TMP]", fullMsg)
+            #print("[TMP]", fullMsg)
             print("msg len: ", str(len(fullMsg)), "req:", str(msgLen + self.headerlength))
             if len(fullMsg) >= msgLen + self.headerlength:
                 # Dostarczona pełna wiadomość
-                fullMsg = fullMsg[self.headerlength:]
                 #upData = pickle.loads(fullMsg)
                 #upData = fullMsg.decode("utf-8")
                 #self.guiInstance.drawFromData(upData)
-                print(fullMsg.decode("utf-8"))
+                print(fullMsg[self.headerlength:msgLen+self.headerlength].decode("utf-8"))
                 isNew = True
                 #fullMsg = b''
             if len(fullMsg) > msgLen + self.headerlength:
-                print("wiadomosc za dluga")
-                fullMsg = fullMsg[msgLen+self.headerlength:]
+                #print("wiadomosc za dluga")
+                fullMsg = fullMsg[msgLen:]
             if len(fullMsg) == msgLen + self.headerlength:
-                print("czyszczenie")
+                #print("czyszczenie")
                 fullMsg = b''
 '''
 class Epserver:
