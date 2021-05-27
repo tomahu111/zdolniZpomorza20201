@@ -145,9 +145,17 @@ class ePaintGUI:
 
     # rysowanie dowolne na canva
     def freeDraw(self,pos, thickness=1, color="#000000"):
+        
         self.canva.create_oval(pos[0]-thickness, pos[1]-thickness, pos[0]+thickness,
                                pos[1]+thickness, fill=color, outline=color)
-    
+
+    def draw2points(self, pos2, pos1, thickness=1,color="#000000"):
+        posDiff = tuple(map(operator.sub, pos2, pos1))
+        maxnum = max(abs(posDiff[0]), abs(posDiff[1]))
+        for i in range(maxnum):
+            newPos = ( int(pos1[0] + (float(i)/maxnum * posDiff[0])), int(pos1[1] + (float(i)/maxnum * posDiff[1])) )
+            self.freeDraw(newPos, thickness=thickness, color=color)
+
     def m1down(self,event):
         self.m1depressed = True
         # Zapisz pozycje poprzedniego klikniecia
@@ -160,12 +168,10 @@ class ePaintGUI:
             pos = (event.x, event.y)
             posDiff = tuple(map(operator.sub, self.pos1, pos))
             maxnum = max(abs(posDiff[0]), abs(posDiff[1]))
-            for i in range(maxnum):
-                newPos = ( int(pos[0] + (float(i)/maxnum * posDiff[0])), int(pos[1] + (float(i)/maxnum * posDiff[1])) )
-                self.freeDraw(newPos, thickness=self.counter, color=self.col)
-        # Wyslij do wszystkich klientow starą i nową pozycje
+            self.draw2points(pos, self.pos1, thickness=self.counter, color=self.col)
+            # Wyslij do wszystkich klientow starą i nową pozycje
             # Format danych: [(pos1), (pos2), thick, color]
-            data = [self.pos1, pos, self.counter, self.col]
+            data = [pos, self.pos1, self.counter, self.col]
             if self.mode == programMode.server:
                 self.packAndSend(data)
             self.pos1 = (event.x, event.y)

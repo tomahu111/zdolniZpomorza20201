@@ -88,7 +88,7 @@ class Epclient2(threading.Thread):
                     full_msg += newbuf
                     msg_len -= len(newbuf)
                 unpackedMsg = pickle.loads(full_msg)
-                self.guiInstance.drawFromData(unpackedMsg[0], unpackedMsg[1], unpackedMsg[2], unpackedMsg[3])
+                self.guiInstance.draw2points(unpackedMsg[0], unpackedMsg[1], unpackedMsg[2], unpackedMsg[3])
 '''
 class Epserver:
     RUNNING=False
