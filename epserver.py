@@ -27,8 +27,10 @@ class ClientThread(threading.Thread):
                 send_len += b' ' * (HEADERLEN - len(send_len))
                 self.client_sock.sendall(send_len)
                 self.client_sock.sendall(msg)
-
             time.sleep(0.01)
+    def stop(self):
+        self.active = False
+
 
 class UberSocket(threading.Thread):
     def __init__(self, ip, port=37234, headerlength=6):
@@ -55,11 +57,6 @@ class UberSocket(threading.Thread):
 
     def prepMessage(self,data,isEncoded=False):
         # Koduje wiadomosc z naglowkiem zawierajacym dlugosc wiadomosci na poczatku
-        # if isEncoded == False:
-        #     msg = f'{len(data):<{self.headerlength}}' + data
-        #     msg = bytes(msg, encoding="utf-8")
-        # else:
-        #     msg = bytes(f'{len(data):<{self.headerlength}}', encoding="utf-8") + data
         self.sendToQueueAll(data)
     def stop(self):
         self.running = False
