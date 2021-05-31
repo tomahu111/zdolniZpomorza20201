@@ -103,18 +103,16 @@ class ePaintGUI:
         filemenu.add_command(label="Wyślij faxem")
         filemenu.add_command(label="Wyślij e-mailem")
         filemenu.add_separator()
-        filemenu.add_command(label="Ustawienia")
+        #filemenu.add_command(label="Ustawienia")
         filemenu.add_command(label="Wyjście", command=root.quit())
         menu.add_cascade(label="Plik", menu=filemenu)
         # Menu edycji
         editmenu = tk.Menu(menu,tearoff=0)
-        editmenu.add_command(label="Kopiuj")
-        editmenu.add_command(label="Wklej")
         editmenu.add_command(label="Obróć w prawo")
         editmenu.add_command(label="Obróć w lewo")
         editmenu.add_command(label="Odbij w poziomie", command=lambda: self.mirrorObjects(0))
         editmenu.add_command(label="Odbij w pionie", command=lambda: self.mirrorObjects(1))
-        editmenu.add_command(label="Resetuj ustawienia pędzla")
+        editmenu.add_command(label="Resetuj ustawienia pędzla", command=lambda: self.resetBrush())
         editmenu.add_command(label="Wyczyść")
 
         menu.add_cascade(label="Edycja", menu=editmenu)
@@ -226,17 +224,10 @@ class ePaintGUI:
         for i in range(maxnum):
             newPos = ( int(pos1[0] + (float(i)/maxnum * posDiff[0])), int(pos1[1] + (float(i)/maxnum * posDiff[1])) )
             self.freeDraw(newPos, thickness=thickness, color=color)
-        #self.freeDraw(pos1, thickness=thickness, color=color)
-
-    # def serverSendThread(self):
-    #     print("Server send thread started")
-    #     while True:
-    #         pass
-    #         time.sleep(0.1)
-    #     # while self.mode == programMode.server:
-    #     #     if self.sendingQueue.empty() == False:
-    #     #         self.server.prepMessage(self.sendingQueue.get())
-    #     # print("Server send thread ended")
+    def resetBrush(self):
+        self.updateThick(1)
+        self.thicknessSlider.set(1)
+        self.chooseColor("#000000")
 
 myWindow = None
 def initGui():
