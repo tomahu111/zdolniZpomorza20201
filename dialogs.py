@@ -6,7 +6,6 @@ from PIL import ImageTk, Image
 from epserver import *
 
 import gui
-
 server_started=False
 
 def messagewindow(type, title, message):
@@ -81,14 +80,18 @@ def connectWindow():
     connectbutton.pack(side=tk.TOP)
 
 def startServer():
+    from gui import programMode
     global server_started
     from gui import myWindow
     myWindow.changeMode(programMode.server)
     if(server_started):
         serverStatusUI.statusLabel['text']='Wyłączony'
+        serverStatusUI.startButton['text']='Uruchom server'
         server_started=False
+
     else:
         serverStatusUI.statusLabel['text']='Włączony'
+        serverStatusUI.startButton['text']='Wyłącz serwer'
         server_started=True
     
 def serverManWindow():

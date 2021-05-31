@@ -20,13 +20,18 @@ class ClientThread(threading.Thread):
 
     def run(self):
         print("client thread started")
-        while self.active == True:
+        clientResponding=True
+        while self.active == True and clientResponding == True:
             if self.queue.empty() == False:
                 msg = self.queue.get()
                 send_len = str(len(msg)).encode("utf-8")
                 send_len += b' ' * (HEADERLEN - len(send_len))
-                self.client_sock.sendall(send_len)
-                self.client_sock.sendall(msg)
+                try:
+                    self.client_sock.sendall(send_len)
+                    self.client_sock.sendall(msg)
+                except:
+                    print("client thread stopped")
+                    clientResponding=False
             time.sleep(0.01)
     def stop(self):
         self.active = False
