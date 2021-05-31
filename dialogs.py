@@ -32,9 +32,6 @@ def helpApp():
 
     contentframe = tk.Frame(helpWindow)
     contentframe.pack(side=tk.TOP)
-    #icon = ImageTk.PhotoImage(Image.open("img/logo.png"))
-    #iconpanel = tk.Label(contentframe, image=icon)
-    #iconpanel.pack(side=tk.TOP)
 
     title = tk.Label(contentframe, text = "ePaint",wraplength=400, justify="left", font=('Segoe UI',24))
     titledesc = tk.Label(contentframe, text = "Program do rysowania z funkcjonalnością udostępniania rysunku innym użytkownikom w sieci.",wraplength=400, justify="left", font=('Arial',12))
@@ -76,7 +73,7 @@ def connectWindow():
 
     label = tk.Label(connectWindow, text = "Wpisz IPv4 serwera:")
     textinput = tk.Entry(connectWindow)
-    textinput.insert(tk.END, '192.168.16.22')
+    #textinput.insert(tk.END, '192.168.16.22')
     connectbutton = tk.Button(connectWindow, height=10, width=20, text="Połącz", command=lambda: connectToServer(textinput.get()))
 
     label.pack(side=tk.TOP)
@@ -86,7 +83,6 @@ def connectWindow():
 def startServer():
     global server_started
     from gui import myWindow
-    print("Starting...")
     myWindow.changeMode(programMode.server)
     if(server_started):
         serverStatusUI.statusLabel['text']='Wyłączony'

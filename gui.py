@@ -58,6 +58,7 @@ class ePaintGUI:
         self.canva = tk.Canvas(master, background="#FEFEFE", cursor="pencil")
         self.canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
         self.m1depressed = False
+        self.chooseColor("#000000")
         
         # Serwer
         self.sendingQueue = queue.Queue()
