@@ -55,17 +55,27 @@ class ePaintGUI:
         self.resetButton.grid(row=0, column=6)
 
         # ustawienie canva
-        self.canva = tk.Canvas(master, background="#FEFEFE", cursor="pencil")
+        self.canva = tk.Canvas(master, background="#FEFEFE", cursor="pencil", width=300, height=300)
         self.canva.grid(row=1, column=0, columnspan=100, sticky="nsew")
         self.m1depressed = False
         self.chooseColor("#000000")
+
+        #self.width = 
         
         # Serwer
         self.sendingQueue = queue.Queue()
 
+        # Eventy
         self.bindEvents()
+        self.canva.bind('<Configure>', self.resize)
+
+        # Menu
         self.createMenu(master)
         
+    def resize(self, event):
+        w,h = event.width-100, event.height-100
+        self.canva.config(width=w, height=h)
+        print(w, h)
 
     def updateThick(self, skala):
         self.counter = int(float(skala))
